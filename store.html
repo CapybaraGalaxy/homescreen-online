@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Tienda de Extensiones</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            /* Paleta Cromática Orgánica y Oscura */
+            --bg: #000000;
+            --surface: #121212;
+            --surface-hover: #1c1c1e;
+            
+            /* Configuración Neo-Glass Pure */
+            --glass: rgba(15, 15, 15, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --blur-val: 30px;
+
+            /* Jerarquía Textual */
+            --text-main: #FFFFFF;
+            --text-muted: #8E8E93;
+
+            /* Estados y Acentos de Sistema */
+            --accent-danger: #FF453A;
+            --accent-success: #34C759;
+
+            /* Físicas de Animación Progresivas */
+            --bezier: cubic-bezier(0.16, 1, 0.3, 1);
+            --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        button, input {
+            font-family: 'Outfit', sans-serif;
+            color: inherit;
+            border: none;
+            background: none;
+            outline: none;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* Contenedor Principal */
+        .app-container {
+            max-width: 900px;
+            margin: 0 auto;
+            height: 100dvh;
+            padding: env(safe-area-inset-top) 24px calc(env(safe-area-inset-bottom) + 16px) 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Cabecera Unificada */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 0 12px 0;
+            flex-shrink: 0;
+            gap: 12px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .app-icon-badge {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            flex-shrink: 0;
+        }
+
+        .title-group {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-width: 0;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-counter {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            display: inline-block;
+            transition: transform 0.3s var(--spring), color 0.3s var(--bezier);
+        }
+
+        .header-counter.pulse {
+            transform: scale(1.16);
+            color: var(--text-main);
+        }
+
+        .header-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 100px;
+            background: var(--glass);
+            backdrop-filter: blur(var(--blur-val));
+            -webkit-backdrop-filter: blur(var(--blur-val));
+            border: 1px solid var(--glass-border);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            flex-shrink: 0;
+            transition: background 0.25s var(--bezier), color 0.25s var(--bezier), transform 0.25s var(--spring);
+        }
+
+        .header-action:hover {
+            background: var(--surface-hover);
+            color: var(--text-main);
+        }
+
+        .header-action:active {
+            transform: scale(0.95);
+        }
+
+        /* Navegación Expansiva de Categorías */
+        .folders-scroll-area {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 4px 0 12px 0;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            flex-shrink: 0;
+        }
+
+        .folders-scroll-area::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pill-btn {
+            padding: 7px 15px;
+            border-radius: 100px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.3s var(--bezier);
+        }
+
+        .pill-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-main);
+        }
+
+        .pill-btn.active {
+            background: var(--text-main);
+            color: var(--bg);
+            border-color: var(--text-main);
+            font-weight: 600;
+            transform: scale(1.02);
+        }
+
+        /* Área Principal de Contenido y Vistas */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 88px;
+            scrollbar-width: none;
+        }
+
+        .main-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .view-section {
+            animation: viewEnter 0.4s var(--bezier) forwards;
+        }
+
+        @keyframes viewEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Secciones y Carruseles Horizontales */
+        .shelf-section {
+            margin-bottom: 26px;
+        }
+
+        .shelf-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .shelf-title {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .shelf-count {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .carousel-controls {
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @media (min-width: 680px) {
+            .carousel-controls {
+                display: flex;
+            }
+        }
+
+        .carousel-nav-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            display: grid;
+            place-items: center;
+            color: var(--text-muted);
+            transition: background 0.25s var(--bezier), color 0.25s var(--bezier), transform 0.25s var(--spring);
+        }
+
+        .carousel-nav-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-main);
+        }
+
+        .carousel-nav-btn:active {
+            transform: scale(0.92);
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            padding: 2px 0 8px 0;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .carousel-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Tarjeta Destacada Especial en Carrusel */
+        .featured-card {
+            scroll-snap-align: start;
+            flex: 0 0 86%;
+            background: radial-gradient(120% 120% at 0% 0%, rgba(255, 255, 255, 0.08) 0%, var(--surface) 65%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 22px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 16px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s var(--bezier), border-color 0.3s var(--bezier), transform 0.3s var(--spring);
+        }
+
+        @media (min-width: 680px) {
+            .featured-card {
+                flex: 0 0 412px;
+            }
+        }
+
+        .featured-card:hover {
+            background: radial-gradient(120% 120% at 0% 0%, rgba(255, 255, 255, 0.12) 0%, var(--surface-hover) 65%);
+            border-color: rgba(255, 255, 255, 0.24);
+            transform: translateY(-2px);
+        }
+
+        .featured-card:active {
+            transform: scale(0.985);
+        }
+
+        .featured-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .featured-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 15px;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            display: grid;
+            place-items: center;
+            color: var(--text-main);
+            flex-shrink: 0;
+        }
+
+        .featured-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 11px;
+            border-radius: 100px;
+            background: rgba(52, 199, 89, 0.12);
+            border: 1px solid rgba(52, 199, 89, 0.28);
+            color: var(--accent-success);
+            font-size: 11.5px;
+            font-weight: 500;
+        }
+
+        .featured-body h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            margin-bottom: 6px;
+        }
+
+        .featured-body p {
+            font-size: 13.5px;
+            font-weight: 300;
+            color: var(--text-muted);
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .featured-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            font-size: 12.5px;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Tarjeta Estándar en Carrusel de Categoría o Grid de Búsqueda */
+        .ext-card {
+            scroll-snap-align: start;
+            flex: 0 0 264px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
+            cursor: pointer;
+            transition: background 0.3s var(--bezier), border-color 0.3s var(--bezier), transform 0.3s var(--spring);
+        }
+
+        @media (min-width: 680px) {
+            .ext-card {
+                flex: 0 0 278px;
+            }
+        }
+
+        .ext-card:hover {
+            background: var(--surface-hover);
+            border-color: rgba(255, 255, 255, 0.16);
+            transform: translateY(-2px);
+        }
+
+        .ext-card:active {
+            transform: scale(0.985);
+        }
+
+        .search-results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 680px) {
+            .search-results-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+        }
+
+        .search-results-grid .ext-card {
+            flex: initial;
+            width: 100%;
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            display: grid;
+            place-items: center;
+            color: var(--text-main);
+            flex-shrink: 0;
+        }
+
+        .card-version {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .card-body h3 {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 5px;
+        }
+
+        .card-body p {
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--text-muted);
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .mini-tag {
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        .card-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-main);
+            font-weight: 500;
+            transition: transform 0.3s var(--spring);
+        }
+
+        .ext-card:hover .card-cta,
+        .featured-card:hover .card-cta {
+            transform: translateX(3px);
+        }
+
+        /* Página Independiente de Detalle de Extensión */
+        .detail-page {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-bottom: 24px;
+        }
+
+        .detail-hero-bar {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 22px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        @media (min-width: 680px) {
+            .detail-hero-bar {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .detail-identity {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .detail-icon-lg {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .detail-titles h2 {
+            font-size: 21px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .detail-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .btn-primary {
+            padding: 12px 18px;
+            border-radius: 14px;
+            background: var(--text-main);
+            color: var(--bg);
+            font-size: 13.5px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.25s var(--spring), opacity 0.25s var(--bezier);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.92;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-secondary {
+            padding: 12px 16px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-size: 13.5px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.25s var(--bezier), transform 0.25s var(--spring);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-hover);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.97);
+        }
+
+        .detail-section {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .detail-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .detail-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-description {
+            font-size: 14.5px;
+            font-weight: 300;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .tags-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        @media (min-width: 680px) {
+            .meta-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .meta-box {
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--glass-border);
+        }
+
+        .meta-box span {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+
+        .meta-box strong {
+            font-size: 13px;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            word-break: break-all;
+        }
+
+        /* Contenedor de Vista Previa Manual */
+        .preview-placeholder {
+            border-radius: 16px;
+            border: 1px dashed rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 36px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .preview-placeholder p {
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 380px;
+            line-height: 1.5;
+        }
+
+        .preview-frame-wrap {
+            width: 100%;
+            height: 460px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            background: #080808;
+            overflow: hidden;
+            animation: viewEnter 0.4s var(--bezier) forwards;
+        }
+
+        .preview-frame-wrap iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000000;
+        }
+
+        /* Buscador Flotante (FAB Search) */
+        .fab-search-wrapper {
+            position: fixed;
+            bottom: calc(env(safe-area-inset-bottom) + 20px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 0 24px;
+            pointer-events: none;
+            transition: opacity 0.3s var(--bezier), transform 0.3s var(--bezier);
+        }
+
+        .fab-search-wrapper.hidden {
+            opacity: 0;
+            transform: translate(-50%, 16px);
+            pointer-events: none;
+        }
+
+        .fab-search {
+            pointer-events: auto;
+            height: 48px;
+            width: 48px;
+            border-radius: 100px;
+            background: var(--glass);
+            backdrop-filter: blur(var(--blur-val));
+            -webkit-backdrop-filter: blur(var(--blur-val));
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: width 0.45s var(--bezier), background 0.3s var(--bezier), border-color 0.3s var(--bezier);
+        }
+
+        .fab-search.expanded {
+            width: 100%;
+            max-width: 420px;
+            padding: 0 16px;
+            justify-content: space-between;
+            background: rgba(24, 24, 26, 0.88);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        .fab-trigger {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            color: var(--text-main);
+            flex-shrink: 0;
+        }
+
+        .fab-search.expanded .fab-trigger {
+            width: auto;
+            margin-right: 10px;
+            color: var(--text-muted);
+        }
+
+        .fab-input {
+            width: 0;
+            opacity: 0;
+            font-size: 14px;
+            color: var(--text-main);
+            transition: opacity 0.25s var(--bezier);
+        }
+
+        .fab-search.expanded .fab-input {
+            width: 100%;
+            opacity: 1;
+        }
+
+        .fab-clear {
+            display: none;
+            color: var(--text-muted);
+            padding: 4px;
+            transition: color 0.2s var(--bezier), transform 0.2s var(--spring);
+        }
+
+        .fab-search.expanded .fab-clear.visible {
+            display: grid;
+            place-items: center;
+        }
+
+        .fab-clear:hover {
+            color: var(--text-main);
+            transform: scale(1.1);
+        }
+
+        /* Estados Vacíos y Skeletons */
+        .empty-state {
+            padding: 56px 20px;
+            text-align: center;
+            background: var(--surface);
+            border: 1px dashed var(--glass-border);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 340px;
+        }
+
+        .skeleton-row {
+            display: flex;
+            gap: 14px;
+            overflow: hidden;
+        }
+
+        .skeleton-card {
+            flex: 0 0 278px;
+            height: 164px;
+            border-radius: 20px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 1.4s infinite var(--bezier);
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-4px); }
+        }
+
+        .error-shake {
+            animation: shake 0.3s var(--bezier);
+            border-color: var(--accent-danger) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="main-view">
+        <header id="app-header"></header>
+        <nav class="folders-scroll-area" id="category-pills" aria-label="Categorías de extensiones"></nav>
+        <main class="main-content" id="main-content"></main>
+    </div>
+
+    <!-- Buscador Flotante -->
+    <div class="fab-search-wrapper" id="fab-wrapper">
+        <div class="fab-search" id="fab-search">
+            <button class="fab-trigger" id="fab-trigger" aria-label="Buscar extensiones">
+                <i data-lucide="search" size="18"></i>
+            </button>
+            <input type="text" class="fab-input" id="search-input" placeholder="Buscar extensión, etiqueta o autor...">
+            <button class="fab-clear" id="fab-clear" aria-label="Limpiar búsqueda">
+                <i data-lucide="x" size="16"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'https://raw.githubusercontent.com/CapybaraGalaxy/homescreen-online/main/custom-tools/';
+        const REPO_URL = 'https://github.com/CapybaraGalaxy/homescreen-online/tree/main/custom-tools';
+        const STORAGE_KEY = 'neo_extensions_store_v2';
+
+        const VALID_LUCIDE_ICONS = new Set([
+            'flask-conical', 'wrench', 'calculator', 'clock', 'palette', 'box',
+            'layers', 'terminal', 'compass', 'cpu', 'sliders', 'sparkles',
+            'calendar', 'check-square', 'file-text', 'globe', 'music', 'camera',
+            'puzzle', 'blocks', 'code', 'zap', 'shield', 'bar-chart-2'
+        ]);
+
+        const FALLBACK_EXTENSIONS = [
+            {
+                id: 'calc-pro',
+                name: 'Calculadora Científica',
+                description: 'Operaciones algebraicas rápidas, historial de expresiones y conversión de unidades en tiempo real.',
+                category: 'Utilidades',
+                version: '1.2.0',
+                author: 'NEO Core',
+                icon: 'calculator',
+                tags: ['matemáticas', 'cálculo', 'conversor'],
+                featured: true,
+                status: 'Estable',
+                file: 'calculator.html',
+                order: 1
+            },
+            {
+                id: 'pomodoro-focus',
+                name: 'Temporizador de Enfoque',
+                description: 'Gestión de bloques de trabajo profundo con intervalos configurables y alertas visuales discretas.',
+                category: 'Productividad',
+                version: '1.0.4',
+                author: 'NEO Core',
+                icon: 'clock',
+                tags: ['tiempo', 'enfoque', 'rutina'],
+                featured: true,
+                status: 'Estable',
+                file: 'timer.html',
+                order: 2
+            },
+            {
+                id: 'color-studio',
+                name: 'Selector Cromático',
+                description: 'Extracción y conversión instantánea entre formatos HEX, RGB y HSL con validación de contraste.',
+                category: 'Diseño',
+                version: '1.1.0',
+                author: 'Comunidad',
+                icon: 'palette',
+                tags: ['color', 'css', 'contraste'],
+                featured: false,
+                status: 'Estable',
+                file: 'palette.html',
+                order: 3
+            },
+            {
+                id: 'json-formatter',
+                name: 'Inspector JSON',
+                description: 'Formateo, validación sintáctica y exploración estructurada de cargas útiles JSON sin salir del entorno.',
+                category: 'Desarrollo',
+                version: '1.3.1',
+                author: 'Comunidad',
+                icon: 'code',
+                tags: ['json', 'datos', 'depuración'],
+                featured: false,
+                status: 'Estable',
+                file: 'json.html',
+                order: 4
+            }
+        ];
+
+        let appData = {
+            extensions: [],
+            selectedCategory: 'Todas',
+            searchQuery: '',
+            currentRoute: 'catalog', // 'catalog' | 'detail'
+            selectedExtensionId: null,
+            previewVisible: false,
+            previewHtml: '',
+            previewLoading: false,
+            isLoading: true
+        };
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    selectedCategory: appData.selectedCategory,
+                    extensionsCache: appData.extensions
+                }));
+            } catch (e) {
+                /* Silencio si almacenamiento no disponible */
+            }
+        }
+
+        function escapeHTML(str) {
+            return String(str ?? '').replace(/[&<>"']/g, match => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[match]));
+        }
+
+        function resolveSafeIcon(iconName) {
+            if (!iconName || typeof iconName !== 'string') return 'puzzle';
+            const clean = iconName.trim().toLowerCase();
+            return VALID_LUCIDE_ICONS.has(clean) ? clean : 'puzzle';
+        }
+
+        function getExtensionSlug(ext, idx) {
+            return String(ext.id || ext.file || ext.name || idx)
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        function triggerShake(element) {
+            element.classList.remove('error-shake');
+            void element.offsetWidth;
+            element.classList.add('error-shake');
+            setTimeout(() => element.classList.remove('error-shake'), 300);
+        }
+
+        function navigateToExtension(slug, pushHistory = true) {
+            const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === slug);
+            if (!ext) {
+                navigateToCatalog(false);
+                return;
+            }
+            appData.currentRoute = 'detail';
+            appData.selectedExtensionId = slug;
+            appData.previewVisible = false;
+            appData.previewHtml = '';
+            appData.previewLoading = false;
+
+            if (pushHistory) {
+                window.history.pushState({ route: 'detail', slug }, '', '#extension/' + encodeURIComponent(slug));
+            }
+            renderApp();
+            document.getElementById('main-content').scrollTop = 0;
+        }
+
+        function navigateToCatalog(pushHistory = true) {
+            appData.currentRoute = 'catalog';
+            appData.selectedExtensionId = null;
+            appData.previewVisible = false;
+            appData.previewHtml = '';
+            appData.previewLoading = false;
+
+            if (pushHistory) {
+                window.history.pushState({ route: 'catalog' }, '', window.location.pathname + window.location.search);
+            }
+            renderApp();
+        }
+
+        window.addEventListener('popstate', () => {
+            syncRouteFromHash();
+            renderApp();
+        });
+
+        function syncRouteFromHash() {
+            const hash = window.location.hash || '';
+            if (hash.startsWith('#extension/')) {
+                const slug = decodeURIComponent(hash.slice('#extension/'.length));
+                const exists = appData.extensions.some((item, idx) => getExtensionSlug(item, idx) === slug);
+                if (exists) {
+                    appData.currentRoute = 'detail';
+                    appData.selectedExtensionId = slug;
+                    appData.previewVisible = false;
+                    appData.previewHtml = '';
+                    return;
+                }
+            }
+            appData.currentRoute = 'catalog';
+            appData.selectedExtensionId = null;
+            appData.previewVisible = false;
+            appData.previewHtml = '';
+        }
+
+        function loadManualPreview() {
+            const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+            if (!ext || !ext.file) return;
+
+            appData.previewVisible = true;
+            appData.previewLoading = true;
+            renderApp();
+
+            fetch(BASE_URL + ext.file)
+                .then(res => {
+                    if (!res.ok) throw new Error('Error de red');
+                    return res.text();
+                })
+                .then(html => {
+                    if (appData.selectedExtensionId === getExtensionSlug(ext, appData.extensions.indexOf(ext))) {
+                        appData.previewHtml = html;
+                        appData.previewLoading = false;
+                        renderApp();
+                    }
+                })
+                .catch(() => {
+                    appData.previewHtml = '<div style="display:grid;place-items:center;height:100%;background:#000;color:#8E8E93;font-family:sans-serif;font-size:13px;padding:24px;text-align:center;">No se pudo obtener el archivo de vista previa desde el repositorio remoto.</div>';
+                    appData.previewLoading = false;
+                    renderApp();
+                });
+        }
+
+        function renderHeader() {
+            const headerEl = document.getElementById('app-header');
+
+            if (appData.currentRoute === 'detail') {
+                const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+                headerEl.innerHTML = `
+                    <div class="header-left">
+                        <button class="header-action" id="btn-back-catalog" aria-label="Volver al catálogo">
+                            <i data-lucide="arrow-left" size="16"></i>
+                            <span>Catálogo</span>
+                        </button>
+                        <div class="title-group">
+                            <h1>${escapeHTML(ext ? ext.name : 'Detalle de Extensión')}</h1>
+                        </div>
+                    </div>
+                    <a class="header-action" href="${REPO_URL}" target="_blank" rel="noopener">
+                        <i data-lucide="github" size="15"></i>
+                        <span>Repositorio</span>
+                    </a>
+                `;
+                return;
+            }
+
+            const totalCount = appData.extensions.length;
+            headerEl.innerHTML = `
+                <div class="header-left">
+                    <div class="app-icon-badge">
+                        <i data-lucide="puzzle" size="20" style="color: var(--text-main);"></i>
+                    </div>
+                    <div class="title-group">
+                        <h1>Tienda de Extensiones</h1>
+                        <span class="header-counter" id="tools-counter">${appData.isLoading && totalCount === 0 ? 'Sincronizando...' : `${totalCount} ${totalCount === 1 ? 'extensión' : 'extensiones'}`}</span>
+                    </div>
+                </div>
+                <a class="header-action" href="${REPO_URL}" target="_blank" rel="noopener">
+                    <i data-lucide="github" size="15"></i>
+                    <span>Repositorio</span>
+                </a>
+            `;
+        }
+
+        function renderCategoryPills() {
+            const pillsEl = document.getElementById('category-pills');
+            if (appData.currentRoute === 'detail') {
+                pillsEl.style.display = 'none';
+                return;
+            }
+            pillsEl.style.display = 'flex';
+
+            const categories = ['Todas', ...new Set(appData.extensions.map(t => t.category).filter(Boolean))];
+            if (!categories.includes(appData.selectedCategory)) {
+                appData.selectedCategory = 'Todas';
+            }
+
+            pillsEl.innerHTML = categories.map(cat => `
+                <button class="pill-btn ${appData.selectedCategory === cat ? 'active' : ''}" data-cat="${escapeHTML(cat)}">
+                    ${escapeHTML(cat)}
+                </button>
+            `).join('');
+        }
+
+        function renderCatalogView(container) {
+            if (appData.isLoading && appData.extensions.length === 0) {
+                container.innerHTML = `
+                    <div class="view-section">
+                        <div class="shelf-section">
+                            <div class="shelf-header"><div class="shelf-title">Cargando catálogo...</div></div>
+                            <div class="skeleton-row">
+                                <div class="skeleton-card"></div>
+                                <div class="skeleton-card"></div>
+                                <div class="skeleton-card"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const query = appData.searchQuery.trim().toLowerCase();
+
+            // Modo Búsqueda Activa o Filtro de Categoría Específica
+            if (query || appData.selectedCategory !== 'Todas') {
+                const filtered = appData.extensions.filter(ext => {
+                    const matchesCat = appData.selectedCategory === 'Todas' || ext.category === appData.selectedCategory;
+                    if (!matchesCat) return false;
+                    if (!query) return true;
+                    const haystack = [
+                        ext.name,
+                        ext.description,
+                        ext.author,
+                        ext.category,
+                        ...(ext.tags || [])
+                    ].join(' ').toLowerCase();
+                    return haystack.includes(query);
+                });
+
+                const sectionLabel = query
+                    ? `Resultados para "${appData.searchQuery.trim()}"`
+                    : appData.selectedCategory;
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="view-section">
+                            <div class="empty-state">
+                                <i data-lucide="search-x" size="28" style="color: var(--text-muted);"></i>
+                                <h3>Sin resultados</h3>
+                                <p>No se encontraron extensiones que coincidan con tu búsqueda o categoría seleccionada.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="view-section">
+                        <section class="shelf-section">
+                            <div class="shelf-header">
+                                <div class="shelf-title">
+                                    <span>${escapeHTML(sectionLabel)}</span>
+                                    <span class="shelf-count">${filtered.length}</span>
+                                </div>
+                            </div>
+                            <div class="search-results-grid">
+                                ${filtered.map(ext => renderStandardCard(ext)).join('')}
+                            </div>
+                        </section>
+                    </div>
+                `;
+                return;
+            }
+
+            // Vista Principal: Carrusel Especial de Destacadas + Carruseles por Categoría
+            const featuredList = appData.extensions.filter(ext => Boolean(ext.featured));
+            const categories = [...new Set(appData.extensions.map(ext => ext.category || 'General'))];
+
+            let html = '<div class="view-section">';
+
+            if (featuredList.length > 0) {
+                html += `
+                    <section class="shelf-section">
+                        <div class="shelf-header">
+                            <div class="shelf-title">
+                                <i data-lucide="sparkles" size="16" style="color: var(--accent-success);"></i>
+                                <span>Extensiones Destacadas</span>
+                                <span class="shelf-count">${featuredList.length}</span>
+                            </div>
+                            <div class="carousel-controls">
+                                <button class="carousel-nav-btn" data-scroll-target="carousel-featured" data-dir="-1" aria-label="Anterior">
+                                    <i data-lucide="chevron-left" size="16"></i>
+                                </button>
+                                <button class="carousel-nav-btn" data-scroll-target="carousel-featured" data-dir="1" aria-label="Siguiente">
+                                    <i data-lucide="chevron-right" size="16"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="carousel-track" id="carousel-featured">
+                            ${featuredList.map(ext => renderFeaturedCard(ext)).join('')}
+                        </div>
+                    </section>
+                `;
+            }
+
+            categories.forEach((cat, catIdx) => {
+                const items = appData.extensions.filter(ext => (ext.category || 'General') === cat);
+                if (items.length === 0) return;
+                const trackId = `carousel-cat-${catIdx}`;
+
+                html += `
+                    <section class="shelf-section">
+                        <div class="shelf-header">
+                            <div class="shelf-title">
+                                <span>${escapeHTML(cat)}</span>
+                                <span class="shelf-count">${items.length}</span>
+                            </div>
+                            <div class="carousel-controls">
+                                <button class="carousel-nav-btn" data-scroll-target="${trackId}" data-dir="-1" aria-label="Anterior">
+                                    <i data-lucide="chevron-left" size="16"></i>
+                                </button>
+                                <button class="carousel-nav-btn" data-scroll-target="${trackId}" data-dir="1" aria-label="Siguiente">
+                                    <i data-lucide="chevron-right" size="16"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="carousel-track" id="${trackId}">
+                            ${items.map(ext => renderStandardCard(ext)).join('')}
+                        </div>
+                    </section>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderFeaturedCard(ext) {
+            const idx = appData.extensions.indexOf(ext);
+            const slug = getExtensionSlug(ext, idx);
+            const safeIcon = resolveSafeIcon(ext.icon);
+
+            return `
+                <article class="featured-card" data-slug="${escapeHTML(slug)}">
+                    <div>
+                        <div class="featured-top">
+                            <div class="featured-icon">
+                                <i data-lucide="${safeIcon}" size="22"></i>
+                            </div>
+                            <span class="featured-pill">
+                                <i data-lucide="sparkles" size="12"></i>
+                                <span>Destacada</span>
+                            </span>
+                        </div>
+                        <div class="featured-body" style="margin-top: 14px;">
+                            <h3>${escapeHTML(ext.name)}</h3>
+                            <p>${escapeHTML(ext.description || 'Sin descripción disponible.')}</p>
+                        </div>
+                    </div>
+                    <div class="featured-footer">
+                        <span>${escapeHTML(ext.category || 'General')} · v${escapeHTML(ext.version || '1.0')}</span>
+                        <span class="card-cta">
+                            <span>Abrir ficha</span>
+                            <i data-lucide="arrow-right" size="14"></i>
+                        </span>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderStandardCard(ext) {
+            const idx = appData.extensions.indexOf(ext);
+            const slug = getExtensionSlug(ext, idx);
+            const safeIcon = resolveSafeIcon(ext.icon);
+            const primaryTag = (ext.tags && ext.tags[0]) ? ext.tags[0] : (ext.author || 'Extensión');
+
+            return `
+                <article class="ext-card" data-slug="${escapeHTML(slug)}">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon">
+                                <i data-lucide="${safeIcon}" size="19"></i>
+                            </div>
+                            <span class="card-version">v${escapeHTML(ext.version || '1.0')}</span>
+                        </div>
+                        <div class="card-body" style="margin-top: 12px;">
+                            <h3>${escapeHTML(ext.name)}</h3>
+                            <p>${escapeHTML(ext.description || 'Sin descripción disponible.')}</p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="mini-tag">${escapeHTML(primaryTag)}</span>
+                        <span class="card-cta">
+                            <span>Detalles</span>
+                            <i data-lucide="chevron-right" size="14"></i>
+                        </span>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderDetailPage(container) {
+            const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+
+            if (!ext) {
+                container.innerHTML = `
+                    <div class="view-section">
+                        <div class="empty-state">
+                            <i data-lucide="alert-circle" size="28" style="color: var(--text-muted);"></i>
+                            <h3>Extensión no encontrada</h3>
+                            <p>El enlace solicitado no corresponde a ninguna extensión disponible.</p>
+                            <button class="btn-secondary" id="btn-empty-back" style="margin-top: 8px;">Volver al catálogo</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const safeIcon = resolveSafeIcon(ext.icon);
+            const tags = ext.tags || [];
+
+            let previewBlockHTML = '';
+            if (!appData.previewVisible) {
+                previewBlockHTML = `
+                    <div class="preview-placeholder">
+                        <i data-lucide="eye" size="26" style="color: var(--text-muted);"></i>
+                        <p>La vista previa interactiva no se carga automáticamente para optimizar el rendimiento. Puedes iniciarla manualmente cuando lo desees.</p>
+                        <button class="btn-secondary" id="btn-load-preview">
+                            <i data-lucide="play" size="15"></i>
+                            <span>Cargar vista previa</span>
+                        </button>
+                    </div>
+                `;
+            } else if (appData.previewLoading) {
+                previewBlockHTML = `
+                    <div class="preview-placeholder">
+                        <i data-lucide="loader" size="24" style="color: var(--text-muted);"></i>
+                        <p>Obteniendo código de la extensión desde el repositorio...</p>
+                    </div>
+                `;
+            } else {
+                previewBlockHTML = `
+                    <div class="preview-frame-wrap">
+                        <iframe id="extension-preview-iframe" title="Vista previa de ${escapeHTML(ext.name)}" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="view-section detail-page">
+                    <section class="detail-hero-bar">
+                        <div class="detail-identity">
+                            <div class="detail-icon-lg">
+                                <i data-lucide="${safeIcon}" size="26" style="color: var(--text-main);"></i>
+                            </div>
+                            <div class="detail-titles">
+                                <h2>${escapeHTML(ext.name)}</h2>
+                                <div class="detail-subtitle">
+                                    <span>${escapeHTML(ext.category || 'General')}</span>
+                                    <span>·</span>
+                                    <span>Por ${escapeHTML(ext.author || 'Comunidad')}</span>
+                                    ${ext.featured ? '<span>·</span><span style="color: var(--accent-success);">Destacada</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-actions">
+                            <button class="btn-primary" id="btn-install-ext">
+                                <i data-lucide="download" size="16"></i>
+                                <span>Instalar</span>
+                            </button>
+                            <button class="btn-secondary" id="btn-source-ext">
+                                <i data-lucide="code" size="16"></i>
+                                <span>Código</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="detail-section">
+                        <div class="detail-section-header">
+                            <h3 class="detail-section-title">
+                                <i data-lucide="file-text" size="16" style="color: var(--text-muted);"></i>
+                                <span>Descripción</span>
+                            </h3>
+                        </div>
+                        <p class="detail-description">${escapeHTML(ext.description || 'Esta extensión no incluye una descripción detallada.')}</p>
+                        ${tags.length > 0 ? `
+                            <div class="tags-row">
+                                ${tags.map(tag => `<span class="mini-tag">#${escapeHTML(tag)}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    </section>
+
+                    <section class="detail-section">
+                        <div class="detail-section-header">
+                            <h3 class="detail-section-title">
+                                <i data-lucide="monitor" size="16" style="color: var(--text-muted);"></i>
+                                <span>Vista previa interactiva</span>
+                            </h3>
+                            ${appData.previewVisible && !appData.previewLoading ? `
+                                <button class="btn-secondary" id="btn-hide-preview" style="padding: 6px 12px; font-size: 12px;">
+                                    <i data-lucide="eye-off" size="14"></i>
+                                    <span>Cerrar vista previa</span>
+                                </button>
+                            ` : ''}
+                        </div>
+                        ${previewBlockHTML}
+                    </section>
+
+                    <section class="detail-section">
+                        <div class="detail-section-header">
+                            <h3 class="detail-section-title">
+                                <i data-lucide="info" size="16" style="color: var(--text-muted);"></i>
+                                <span>Ficha técnica</span>
+                            </h3>
+                        </div>
+                        <div class="meta-grid">
+                            <div class="meta-box">
+                                <span>Versión</span>
+                                <strong>${escapeHTML(ext.version || '1.0.0')}</strong>
+                            </div>
+                            <div class="meta-box">
+                                <span>Autor</span>
+                                <strong>${escapeHTML(ext.author || 'Comunidad')}</strong>
+                            </div>
+                            <div class="meta-box">
+                                <span>Estado</span>
+                                <strong>${escapeHTML(ext.status || 'Estable')}</strong>
+                            </div>
+                            <div class="meta-box">
+                                <span>Archivo fuente</span>
+                                <strong>${escapeHTML(ext.file || 'N/A')}</strong>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            `;
+
+            if (appData.previewVisible && !appData.previewLoading) {
+                const iframe = document.getElementById('extension-preview-iframe');
+                if (iframe) {
+                    iframe.srcdoc = appData.previewHtml;
+                }
+            }
+        }
+
+        function renderApp() {
+            const fabWrapper = document.getElementById('fab-wrapper');
+            fabWrapper.classList.toggle('hidden', appData.currentRoute === 'detail');
+
+            renderHeader();
+            renderCategoryPills();
+
+            const mainContent = document.getElementById('main-content');
+            if (appData.currentRoute === 'detail') {
+                renderDetailPage(mainContent);
+            } else {
+                renderCatalogView(mainContent);
+            }
+
+            lucide.createIcons();
+        }
+
+        async function fetchCatalog() {
+            try {
+                const response = await fetch(BASE_URL + 'tools.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const payload = await response.json();
+                const sorted = (payload.tools || []).slice().sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                if (sorted.length > 0) {
+                    appData.extensions = sorted;
+                } else if (appData.extensions.length === 0) {
+                    appData.extensions = FALLBACK_EXTENSIONS;
+                }
+            } catch (e) {
+                if (appData.extensions.length === 0) {
+                    appData.extensions = FALLBACK_EXTENSIONS;
+                }
+            } finally {
+                appData.isLoading = false;
+                saveData();
+                syncRouteFromHash();
+                renderApp();
+            }
+        }
+
+        function setupEventListeners() {
+            // Navegación por píldoras de categorías
+            document.getElementById('category-pills').addEventListener('click', e => {
+                const pill = e.target.closest('.pill-btn');
+                if (!pill) return;
+                appData.selectedCategory = pill.dataset.cat;
+                saveData();
+                renderApp();
+            });
+
+            // Delegación de eventos en cabecera
+            document.getElementById('app-header').addEventListener('click', e => {
+                if (e.target.closest('#btn-back-catalog')) {
+                    navigateToCatalog(true);
+                }
+            });
+
+            // Delegación de eventos en contenido principal
+            document.getElementById('main-content').addEventListener('click', e => {
+                // Controles horizontales de carrusel
+                const navBtn = e.target.closest('.carousel-nav-btn');
+                if (navBtn) {
+                    const track = document.getElementById(navBtn.dataset.scrollTarget);
+                    if (track) {
+                        const dir = Number(navBtn.dataset.dir);
+                        track.scrollBy({ left: dir * 320, behavior: 'smooth' });
+                    }
+                    return;
+                }
+
+                // Apertura de página independiente de extensión
+                const card = e.target.closest('[data-slug]');
+                if (card) {
+                    navigateToExtension(card.dataset.slug, true);
+                    return;
+                }
+
+                // Acciones dentro de la página de extensión
+                if (e.target.closest('#btn-empty-back')) {
+                    navigateToCatalog(true);
+                    return;
+                }
+
+                if (e.target.closest('#btn-load-preview')) {
+                    loadManualPreview();
+                    return;
+                }
+
+                if (e.target.closest('#btn-hide-preview')) {
+                    appData.previewVisible = false;
+                    appData.previewHtml = '';
+                    renderApp();
+                    return;
+                }
+
+                if (e.target.closest('#btn-install-ext')) {
+                    window.open(REPO_URL, '_blank', 'noopener');
+                    return;
+                }
+
+                const sourceBtn = e.target.closest('#btn-source-ext');
+                if (sourceBtn) {
+                    const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+                    if (!ext || !ext.file) {
+                        triggerShake(sourceBtn);
+                        return;
+                    }
+                    window.open(BASE_URL + ext.file, '_blank', 'noopener');
+                }
+            });
+
+            // Buscador Flotante (FAB Search)
+            const fabSearch = document.getElementById('fab-search');
+            const fabTrigger = document.getElementById('fab-trigger');
+            const searchInput = document.getElementById('search-input');
+            const fabClear = document.getElementById('fab-clear');
+
+            fabTrigger.addEventListener('click', () => {
+                fabSearch.classList.add('expanded');
+                searchInput.focus();
+            });
+
+            searchInput.addEventListener('input', e => {
+                appData.searchQuery = e.target.value;
+                fabClear.classList.toggle('visible', appData.searchQuery.length > 0);
+                renderApp();
+            });
+
+            searchInput.addEventListener('blur', () => {
+                if (!appData.searchQuery.trim()) {
+                    fabSearch.classList.remove('expanded');
+                }
+            });
+
+            fabClear.addEventListener('click', () => {
+                appData.searchQuery = '';
+                searchInput.value = '';
+                fabClear.classList.remove('visible');
+                searchInput.focus();
+                renderApp();
+            });
+        }
+
+        window.onload = () => {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed.selectedCategory) appData.selectedCategory = parsed.selectedCategory;
+                    if (Array.isArray(parsed.extensionsCache) && parsed.extensionsCache.length > 0) {
+                        appData.extensions = parsed.extensionsCache;
+                        appData.isLoading = false;
+                    }
+                } else {
+                    appData.extensions = FALLBACK_EXTENSIONS;
+                    saveData();
+                }
+            } catch (e) {
+                appData.extensions = FALLBACK_EXTENSIONS;
+            }
+
+            syncRouteFromHash();
+            setupEventListeners();
+            renderApp();
+            fetchCatalog();
+        };
+    </script>
+</body>
+</html>
