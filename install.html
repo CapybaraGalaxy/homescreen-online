@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Instalar herramienta · Homescreen NEO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="styles.css">
+<style>
+body{min-height:100vh;display:grid;place-items:center;padding:24px}
+.install-page{width:min(100%,490px)}
+.install-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:22px;color:#fff;font-size:14px;font-weight:600}
+.install-brand-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#17171b;border:1px solid var(--glass-border-strong)}
+.install-panel{padding:26px;border-radius:25px;background:rgba(17,17,19,.96);border:1px solid var(--glass-border-strong);box-shadow:0 24px 70px rgba(0,0,0,.65),var(--glass-highlight);display:flex;flex-direction:column;gap:17px}
+.tool-heading{display:flex;align-items:center;gap:14px}
+.tool-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:18px;background:linear-gradient(145deg,#25252b,#111114);border:1px solid var(--glass-border-strong);color:#fff;flex:0 0 58px}
+.tool-heading h1{font-size:21px;font-weight:600;letter-spacing:-.025em}
+.tool-heading p{margin-top:4px;color:var(--text-muted);font-size:12px}
+.tool-description{color:rgba(255,255,255,.78);font-size:13.5px;line-height:1.6}
+.tool-meta{display:flex;flex-wrap:wrap;gap:7px}
+.tool-meta span{padding:5px 9px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid var(--glass-border);color:var(--text-muted);font-size:11px}
+.page-warning{display:flex;gap:9px;padding:11px 12px;border-radius:13px;color:#ffd08a;background:rgba(255,159,10,.09);border:1px solid rgba(255,159,10,.22);font-size:12px;line-height:1.45}
+.page-error{display:flex;align-items:flex-start;gap:9px;color:#ff8f89;background:rgba(255,69,58,.08);border:1px solid rgba(255,69,58,.2);border-radius:13px;padding:12px;font-size:12.5px;line-height:1.5}
+.destination-list{display:grid;gap:10px;margin-top:2px}
+.destination-list button{width:100%;display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:16px;text-align:left;color:var(--text-main);background:var(--surface);border:1px solid var(--glass-border-strong);transition:background .22s var(--bezier),border-color .22s var(--bezier),transform .22s var(--spring)}
+.destination-list button:hover:not(:disabled){background:var(--surface-hover);border-color:rgba(255,255,255,.28);transform:translateY(-1px)}
+.destination-list button:disabled{opacity:.35;cursor:not-allowed}
+.destination-icon{width:40px;height:40px;display:grid;place-items:center;flex:0 0 40px;border-radius:13px;background:rgba(255,255,255,.06);border:1px solid var(--glass-border)}
+.destination-copy{flex:1;display:flex;flex-direction:column;gap:3px}
+.destination-copy strong{font-size:13.5px}
+.destination-copy small{color:var(--text-muted);font-size:11.5px}
+.page-footnote{color:var(--text-subtle);font-size:11.5px;line-height:1.5;text-align:center}
+.page-status{color:var(--text-muted);font-size:13px;line-height:1.5;text-align:center;padding:16px 4px}
+@media(max-width:420px){.install-panel{padding:21px}.tool-heading h1{font-size:19px}}
+</style>
+</head>
+<body>
+<main class="install-page">
+<div class="install-brand"><span class="install-brand-mark"><i data-lucide="puzzle" size="18"></i></span>Homescreen NEO <span style="color:var(--text-subtle);font-weight:400">/ Herramientas</span></div>
+<section class="install-panel" id="install-panel" aria-live="polite">
+<div class="page-status" id="page-status"><i data-lucide="loader-circle" size="19"></i><p>Cargando información de la herramienta…</p></div>
+</section>
+<p class="page-footnote" style="margin-top:16px">La instalación y las actualizaciones se gestionan desde Homescreen NEO.</p>
+</main>
+<script>
+(() => {
+ const CATALOG_URL='https://raw.githubusercontent.com/CapybaraGalaxy/homescreen-online/main/custom-tools/tools.json';
+ const DESTINATIONS={github:'https://capybaragalaxy.github.io/HOMESCREEN/',cloudflare:'https://homescreen.guilleplayer.workers.dev/'};
+ const panel=document.getElementById('install-panel');
+ const requestedId=(new URLSearchParams(location.search).get('id')||'').trim();
+ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function state(tool){
+  const s=String(tool?.status||'').trim().toLowerCase();
+  if(['disabled','inactive','off','hidden','blocked','unavailable','desactivada','inactiva','deshabilitada'].includes(s))return 'disabled';
+  if(['demo','experimental'].includes(s))return 'caution';
+  if(['active','stable','estable','enabled'].includes(s))return 'available';
+  return 'disabled';
+ }
+ function error(message){
+  panel.innerHTML=`<div class="page-error"><i data-lucide="alert-circle" size="17"></i><span>${esc(message)}</span></div><a class="btn-secondary" href="store.html" style="justify-content:center;text-decoration:none">Volver a la tienda</a>`;
+  lucide.createIcons({root:panel});
+ }
+ function redirect(tool,destination){
+  if(state(tool)==='disabled')return;
+  const target=new URL(DESTINATIONS[destination]);
+  target.searchParams.set('hs_install',String(tool.id));
+  location.assign(target.toString());
+ }
+ async function init(){
+  if(!requestedId){error('Falta el identificador de la herramienta. Usa un enlace con el formato install.html?id=example.');return;}
+  try{
+   const response=await fetch(CATALOG_URL,{cache:'no-store'});
+   if(!response.ok)throw new Error('No se pudo consultar el catálogo oficial.');
+   const catalog=await response.json();
+   const tool=(catalog.tools||[]).find(item=>String(item.id||'')===requestedId);
+   if(!tool){error('No existe ninguna herramienta con ese identificador en el catálogo oficial.');return;}
+   const toolState=state(tool),disabled=toolState==='disabled';
+   const warning=toolState==='caution'?`<div class="page-warning"><i data-lucide="flask-conical" size="16"></i><span>Esta herramienta está marcada como <strong>${esc(tool.status)}</strong>. Puede incluir funciones incompletas o cambios experimentales. Continúa solo si aceptas ese riesgo.</span></div>`:'';
+   const icon=/^[a-z0-9-]+$/i.test(tool.icon||'')?tool.icon:'puzzle';
+   panel.innerHTML=`
+    <div class="tool-heading"><div class="tool-icon"><i data-lucide="${esc(icon)}" size="26"></i></div><div><h1>${esc(tool.name||'Herramienta')}</h1><p>${esc(tool.author||'Homescreen NEO')}</p></div></div>
+    <p class="tool-description">${esc(tool.description||'Sin descripción disponible.')}</p>
+    <div class="tool-meta"><span>${esc(tool.category||'General')}</span><span>v${esc(tool.version||'1.0.0')}</span><span>${esc(tool.status||'Estado desconocido')}</span></div>
+    ${warning}
+    ${disabled?'<div class="page-error"><i data-lucide="ban" size="17"></i><span>Esta herramienta no está disponible para instalar según su estado en el catálogo oficial.</span></div>':'<p class="install-modal-description">Elige dónde quieres abrir Homescreen para completar la instalación:</p>'}
+    <div class="destination-list">
+     <button type="button" data-destination="github" ${disabled?'disabled':''}><span class="destination-icon"><i data-lucide="github" size="19"></i></span><span class="destination-copy"><strong>GitHub Pages</strong><small>Versión alojada en GitHub</small></span><i data-lucide="arrow-up-right" size="17"></i></button>
+     <button type="button" data-destination="cloudflare" ${disabled?'disabled':''}><span class="destination-icon"><i data-lucide="cloud" size="19"></i></span><span class="destination-copy"><strong>Cloudflare</strong><small>Versión alojada en Cloudflare</small></span><i data-lucide="arrow-up-right" size="17"></i></button>
+    </div>`;
+   panel.querySelectorAll('[data-destination]').forEach(button=>button.addEventListener('click',()=>redirect(tool,button.dataset.destination)));
+   lucide.createIcons({root:panel});
+  }catch(err){error(err.message||'No se pudo cargar la herramienta. Comprueba tu conexión e inténtalo de nuevo.');}
+ }
+ init();
+})();
+</script>
+</body>
+</html>

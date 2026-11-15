@@ -53,35 +53,30 @@
     <!-- Contenedor Principal -->
     <main class="app-container" id="main-content"></main>
 
-    <!-- Modal de Obtención / Integración -->
+    <!-- Selector de destino: Homescreen gestiona la instalación real -->
     <div class="modal-backdrop" id="install-modal" role="dialog" aria-modal="true" aria-labelledby="modal-ext-title">
-        <div class="modal-card">
+        <div class="modal-card install-destination-card">
             <div class="modal-header">
-                <h3 id="modal-ext-title">Obtener extensión en Homescreen</h3>
-                <button class="modal-close" id="btn-close-modal" aria-label="Cerrar">
-                    <i data-lucide="x" size="16"></i>
+                <h3 id="modal-ext-title">Instalar en Homescreen</h3>
+                <button class="modal-close" id="btn-close-modal" aria-label="Cerrar"><i data-lucide="x" size="16"></i></button>
+            </div>
+            <p class="install-modal-description" id="modal-ext-desc">Elige dónde quieres abrir Homescreen para completar la instalación.</p>
+            <div class="install-warning" id="modal-install-warning" hidden>
+                <i data-lucide="flask-conical" size="16"></i><span id="modal-install-warning-text"></span>
+            </div>
+            <div class="install-destinations">
+                <button class="install-destination-btn" type="button" data-hs-destination="github">
+                    <span class="install-destination-icon"><i data-lucide="cat" size="19"></i></span>
+                    <span class="install-destination-copy"><strong>GitHub Pages</strong><small>Versión alojada en GitHub</small></span>
+                    <i data-lucide="arrow-up-right" size="17"></i>
+                </button>
+                <button class="install-destination-btn" type="button" data-hs-destination="cloudflare">
+                    <span class="install-destination-icon"><i data-lucide="cloud" size="19"></i></span>
+                    <span class="install-destination-copy"><strong>Cloudflare</strong><small>Versión alojada en Cloudflare</small></span>
+                    <i data-lucide="arrow-up-right" size="17"></i>
                 </button>
             </div>
-            <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;" id="modal-ext-desc">
-                Copia el enlace directo del módulo para añadirlo a tu Homescreen o descarga el archivo fuente.
-            </p>
-            <div class="url-copy-box">
-                <span id="modal-ext-url">https://...</span>
-                <button class="btn-secondary" id="btn-copy-raw-url" style="padding: 6px 12px; font-size: 12px; flex-shrink: 0;">
-                    <i data-lucide="copy" size="13"></i>
-                    <span>Copiar</span>
-                </button>
-            </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px;">
-                <a class="btn-secondary" id="modal-open-file" href="#" target="_blank" rel="noopener" style="text-decoration: none;">
-                    <i data-lucide="external-link" size="14"></i>
-                    <span>Abrir archivo</span>
-                </a>
-                <button class="btn-primary" id="btn-confirm-install">
-                    <i data-lucide="check" size="15"></i>
-                    <span>Marcar obtenida</span>
-                </button>
-            </div>
+            <p class="install-modal-footnote">Homescreen NEO te pedirá confirmar la instalación. La tienda no instala ni modifica herramientas directamente.</p>
         </div>
     </div>
 
@@ -994,9 +989,9 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                         </div>
 
                         <div class="detail-cta-group">
-                            <button class="btn-primary ${isInstalled ? 'installed-state' : ''}" id="btn-install-ext">
-                                <i data-lucide="${isInstalled ? 'check' : 'download'}" size="16"></i>
-                                <span>${isInstalled ? 'Obtenida' : 'Obtener'}</span>
+                            <button class="btn-primary ${getToolInstallState(ext) === 'disabled' ? 'install-disabled' : ''}" id="btn-install-ext" ${getToolInstallState(ext) === 'disabled' ? 'disabled aria-disabled="true"' : ''}>
+                                <i data-lucide="${getToolInstallState(ext) === 'disabled' ? 'ban' : 'download'}" size="16"></i>
+                                <span>${getToolInstallState(ext) === 'disabled' ? 'No disponible' : 'Instalar'}</span>
                             </button>
                             <button class="btn-secondary" id="btn-source-ext">
                                 <i data-lucide="code" size="16"></i>
@@ -1127,14 +1122,68 @@ function generateAbstractArt(seedText, variantOffset = 0) {
             }
         }
 
-        function openInstallModal(ext) {
+        const HOMESCREEN_DESTINATIONS = {
+            github: 'https://capybaragalaxy.github.io/HOMESCREEN/',
+            cloudflare: 'https://homescreen.guilleplayer.workers.dev/'
+        };
+
+        function getToolInstallState(ext) {
+            const status = String(ext?.status || '').trim().toLowerCase();
+            if (['disabled', 'inactive', 'off', 'hidden', 'blocked', 'unavailable', 'desactivada', 'inactiva', 'deshabilitada'].includes(status)) return 'disabled';
+            if (['demo', 'experimental'].includes(status)) return 'caution';
+            if (['active', 'stable', 'estable', 'enabled'].includes(status)) return 'available';
+            return 'disabled';
+        }
+
+        function buildHomescreenInstallUrl(ext, destination) {
+            const base = HOMESCREEN_DESTINATIONS[destination];
+            if (!base || !ext?.id) return null;
+            const url = new URL(base);
+            url.searchParams.set('hs_install', String(ext.id));
+            return url.toString();
+        }
+
+        async function openInstallModal(ext) {
+            if (!ext?.id) {
+                showToast('La herramienta no tiene un identificador válido', 'alert-circle');
+                return;
+            }
+
+            // Verificar siempre el estado actual del catálogo oficial antes de ofrecer instalar.
+            try {
+                const response = await fetch(BASE_URL + 'tools.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error('No se pudo verificar el catálogo');
+                const payload = await response.json();
+                const currentTool = (payload.tools || []).find(item => String(item.id || '') === String(ext.id));
+                if (!currentTool) {
+                    showToast('La herramienta ya no aparece en el catálogo oficial', 'ban');
+                    return;
+                }
+                const index = appData.extensions.findIndex(item => String(item.id || '') === String(ext.id));
+                if (index >= 0) appData.extensions[index] = currentTool;
+                else appData.extensions.push(currentTool);
+                ext = currentTool;
+                saveData();
+            } catch (error) {
+                showToast('No se pudo verificar el estado actual. Inténtalo de nuevo.', 'wifi-off');
+                return;
+            }
+
+            if (getToolInstallState(ext) === 'disabled') {
+                showToast('Esta herramienta no está disponible para instalar', 'ban');
+                renderApp();
+                return;
+            }
             const modal = document.getElementById('install-modal');
-            const rawUrl = BASE_URL + (ext.file || '');
-            document.getElementById('modal-ext-title').textContent = `Obtener ${ext.name}`;
-            document.getElementById('modal-ext-desc').textContent = `Copia la URL directa del módulo para integrarlo en tu Homescreen o ábrelo directamente en una pestaña nueva.`;
-            document.getElementById('modal-ext-url').textContent = rawUrl;
-            document.getElementById('modal-open-file').href = rawUrl;
+            const warning = document.getElementById('modal-install-warning');
+            const warningText = document.getElementById('modal-install-warning-text');
+            document.getElementById('modal-ext-title').textContent = `Instalar ${ext.name}`;
+            document.getElementById('modal-ext-desc').textContent = 'Elige la versión de Homescreen en la que quieres instalar esta herramienta.';
+            warning.hidden = getToolInstallState(ext) !== 'caution';
+            warningText.textContent = `Esta herramienta está marcada como ${String(ext.status)}. Puede contener funciones incompletas o cambios experimentales.`;
+            modal.dataset.toolId = String(ext.id);
             modal.classList.add('open');
+            lucide.createIcons({ root: modal });
         }
 
         function closeInstallModal() {
@@ -1233,21 +1282,32 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                 if (e.target.id === 'install-modal') closeInstallModal();
             });
 
-            document.getElementById('btn-copy-raw-url').addEventListener('click', () => {
-                const url = document.getElementById('modal-ext-url').textContent;
-                navigator.clipboard?.writeText(url);
-                showToast('Enlace directo copiado al portapapeles');
-            });
-
-            document.getElementById('btn-confirm-install').addEventListener('click', () => {
-                const slug = appData.selectedExtensionId;
-                if (slug && !appData.installedIds.includes(slug)) {
-                    appData.installedIds.push(slug);
-                    saveData();
-                }
-                closeInstallModal();
-                renderApp();
-                showToast('Extensión marcada como obtenida');
+            document.querySelectorAll('[data-hs-destination]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const destination = button.dataset.hsDestination;
+                    const toolId = document.getElementById('install-modal').dataset.toolId;
+                    const ext = appData.extensions.find(item => String(item.id || '') === toolId);
+                    if (!ext || getToolInstallState(ext) === 'disabled') {
+                        closeInstallModal();
+                        showToast('Esta herramienta no está disponible para instalar', 'ban');
+                        return;
+                    }
+                    const targetUrl = buildHomescreenInstallUrl(ext, destination);
+                    if (!targetUrl) {
+                        showToast('No se pudo generar el enlace de instalación', 'alert-circle');
+                        return;
+                    }
+                    if (window.top !== window.self) {
+                        // Evita navegar dentro del marco cuando la tienda está integrada/compacta.
+                        const opened = window.open(targetUrl, '_blank', 'noopener,noreferrer');
+                        if (!opened) {
+                            try { window.top.location.href = targetUrl; }
+                            catch (error) { showToast('El navegador ha bloqueado la apertura de Homescreen', 'alert-circle'); }
+                        }
+                    } else {
+                        window.location.assign(targetUrl);
+                    }
+                });
             });
 
             // Delegación global en contenido principal
