@@ -5,7 +5,7 @@
   "tools": [
     {
       "id": "example",
-      "name": "Example",
+      "name": "Herramienta de ejemplo",
       "description": "Demostración técnica del sistema de herramientas personalizadas de Homescreen NEO.",
       "category": "Desarrollo",
       "tags": [
@@ -18,7 +18,43 @@
       "version": "1.0.0",
       "author": "Guilleplayer",
       "status": "demo",
-      "featured": false,
+      "featured": true,
+      "order": 999
+    },
+    {
+      "id": "example",
+      "name": "Herramienta de ejemplo 2",
+      "description": "Demostración técnica del sistema de herramientas personalizadas de Homescreen NEO.",
+      "category": "Desarrollo",
+      "tags": [
+        "demo",
+        "desarrollo",
+        "experimental"
+      ],
+      "icon": "flask-conical",
+      "file": "example.html",
+      "version": "1.0.0",
+      "author": "Guilleplayer",
+      "status": "demo",
+      "featured": true,
+      "order": 999
+    },
+    {
+      "id": "example",
+      "name": "Herramienta de ejemplo 3",
+      "description": "Demostración técnica del sistema de herramientas personalizadas de Homescreen NEO.",
+      "category": "Desarrollo",
+      "tags": [
+        "demo",
+        "desarrollo",
+        "experimental"
+      ],
+      "icon": "flask-conical",
+      "file": "example.html",
+      "version": "1.0.0",
+      "author": "Guilleplayer",
+      "status": "demo",
+      "featured": true,
       "order": 999
     }
   ]

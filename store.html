@@ -12,21 +12,28 @@
         :root {
             /* Paleta Cromática Orgánica y Oscura */
             --bg: #000000;
-            --surface: #121212;
-            --surface-hover: #1c1c1e;
+            --surface: #111113;
+            --surface-elevated: #18181b;
+            --surface-hover: #1f1f24;
             
             /* Configuración Neo-Glass Pure */
-            --glass: rgba(15, 15, 15, 0.4);
+            --glass: rgba(14, 14, 16, 0.72);
             --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-strong: rgba(255, 255, 255, 0.16);
+            --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
             --blur-val: 30px;
 
             /* Jerarquía Textual */
             --text-main: #FFFFFF;
             --text-muted: #8E8E93;
+            --text-subtle: #636366;
 
             /* Estados y Acentos de Sistema */
+            --accent-blue: #0A84FF;
+            --accent-purple: #BF5AF2;
             --accent-danger: #FF453A;
             --accent-success: #34C759;
+            --accent-amber: #FF9F0A;
 
             /* Físicas de Animación Progresivas */
             --bezier: cubic-bezier(0.16, 1, 0.3, 1);
@@ -40,13 +47,34 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Scrollbar minimalista */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.14);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.26);
         }
 
         button, input {
@@ -61,98 +89,186 @@
             cursor: pointer;
         }
 
-        /* Contenedor Principal */
-        .app-container {
-            max-width: 900px;
-            margin: 0 auto;
-            height: 100dvh;
-            padding: env(safe-area-inset-top) 24px calc(env(safe-area-inset-bottom) + 16px) 24px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+        /* =========================================================
+           BARRA SUPERIOR PERSISTENTE ESTILO STORE
+           ========================================================= */
+        .top-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(var(--blur-val));
+            -webkit-backdrop-filter: blur(var(--blur-val));
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        /* Cabecera Unificada */
-        header {
+        .navbar-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top) + 12px) 24px 0 24px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 0 12px 0;
-            flex-shrink: 0;
+            flex-direction: column;
             gap: 12px;
         }
 
-        .header-left {
+        .navbar-top-row {
             display: flex;
             align-items: center;
-            gap: 14px;
-            min-width: 0;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            flex-shrink: 0;
+            user-select: none;
+            transition: opacity 0.2s var(--bezier);
+        }
+
+        .brand-logo:hover {
+            opacity: 0.9;
         }
 
         .app-icon-badge {
-            width: 42px;
-            height: 42px;
-            border-radius: 13px;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
             display: grid;
             place-items: center;
-            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.02));
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-            flex-shrink: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03));
+            border: 1px solid var(--glass-border-strong);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), var(--glass-highlight);
+            transition: transform 0.3s var(--spring);
         }
 
-        .title-group {
+        .brand-logo:hover .app-icon-badge {
+            transform: rotate(-4deg) scale(1.04);
+        }
+
+        .brand-title-wrap {
             display: flex;
             align-items: baseline;
-            gap: 10px;
-            flex-wrap: wrap;
-            min-width: 0;
+            gap: 9px;
         }
 
-        h1 {
-            font-size: 22px;
+        .brand-title-wrap h1 {
+            font-size: 19px;
             font-weight: 600;
             letter-spacing: -0.02em;
-            line-height: 1.2;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .header-counter {
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 12px;
+            font-weight: 500;
             color: var(--text-muted);
+            padding: 2px 8px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
             font-variant-numeric: tabular-nums;
-            display: inline-block;
-            transition: transform 0.3s var(--spring), color 0.3s var(--bezier);
         }
 
-        .header-counter.pulse {
-            transform: scale(1.16);
+        /* Buscador Integrado con Atajo KBD */
+        .search-bar-pill {
+            flex: 1;
+            max-width: 460px;
+            height: 40px;
+            border-radius: 100px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            padding: 0 12px 0 14px;
+            gap: 10px;
+            transition: border-color 0.25s var(--bezier), background 0.25s var(--bezier), box-shadow 0.25s var(--bezier);
+        }
+
+        .search-bar-pill:hover {
+            border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .search-bar-pill:focus-within {
+            background: var(--surface-elevated);
+            border-color: rgba(255, 255, 255, 0.28);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+        }
+
+        .search-bar-pill input {
+            width: 100%;
+            font-size: 13.5px;
             color: var(--text-main);
+        }
+
+        .search-bar-pill input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .kbd-hint {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-subtle);
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            flex-shrink: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .search-bar-pill:focus-within .kbd-hint {
+            opacity: 0;
+            display: none;
+        }
+
+        .search-clear-btn {
+            display: none;
+            color: var(--text-muted);
+            padding: 4px;
+            border-radius: 50%;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .search-clear-btn.visible {
+            display: grid;
+            place-items: center;
+        }
+
+        .search-clear-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header-actions-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
         }
 
         .header-action {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 14px;
+            height: 38px;
+            padding: 0 14px;
             border-radius: 100px;
-            background: var(--glass);
-            backdrop-filter: blur(var(--blur-val));
-            -webkit-backdrop-filter: blur(var(--blur-val));
+            background: var(--surface);
             border: 1px solid var(--glass-border);
             font-size: 13px;
             font-weight: 500;
             color: var(--text-muted);
             text-decoration: none;
-            flex-shrink: 0;
-            transition: background 0.25s var(--bezier), color 0.25s var(--bezier), transform 0.25s var(--spring);
+            transition: background 0.25s var(--bezier), color 0.25s var(--bezier), border-color 0.25s var(--bezier), transform 0.25s var(--spring);
         }
 
         .header-action:hover {
             background: var(--surface-hover);
+            border-color: var(--glass-border-strong);
             color: var(--text-main);
         }
 
@@ -160,56 +276,77 @@
             transform: scale(0.95);
         }
 
-        /* Navegación Expansiva de Categorías */
-        .folders-scroll-area {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 4px 0 12px 0;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-            flex-shrink: 0;
+        .header-action.icon-only {
+            width: 38px;
+            padding: 0;
+            justify-content: center;
         }
 
-        .folders-scroll-area::-webkit-scrollbar {
+        @media (max-width: 680px) {
+            .header-action span,
+            .kbd-hint,
+            .header-counter {
+                display: none;
+            }
+            .header-action {
+                width: 38px;
+                padding: 0;
+                justify-content: center;
+            }
+            .brand-title-wrap h1 {
+                font-size: 17px;
+            }
+        }
+
+        /* Pestañas Inferiores de la Barra Superior */
+        .nav-tabs-row {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-tabs-row::-webkit-scrollbar {
             display: none;
         }
 
-        .pill-btn {
-            padding: 7px 15px;
-            border-radius: 100px;
-            background: var(--surface);
-            border: 1px solid var(--glass-border);
-            color: var(--text-muted);
-            font-size: 13px;
+        .nav-tab {
+            position: relative;
+            padding: 6px 2px 11px 2px;
+            font-size: 13.5px;
             font-weight: 500;
+            color: var(--text-muted);
             white-space: nowrap;
-            transition: all 0.3s var(--bezier);
+            transition: color 0.25s var(--bezier);
         }
 
-        .pill-btn:hover {
-            background: var(--surface-hover);
+        .nav-tab:hover {
             color: var(--text-main);
         }
 
-        .pill-btn.active {
-            background: var(--text-main);
-            color: var(--bg);
-            border-color: var(--text-main);
+        .nav-tab.active {
+            color: var(--text-main);
             font-weight: 600;
-            transform: scale(1.02);
         }
 
-        /* Área Principal de Contenido y Vistas */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 88px;
-            scrollbar-width: none;
+        .nav-tab.active::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2.5px;
+            border-radius: 3px 3px 0 0;
+            background: var(--text-main);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        .main-content::-webkit-scrollbar {
-            display: none;
+        /* Contenedor Principal */
+        .app-container {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 24px 24px calc(env(safe-area-inset-bottom) + 56px) 24px;
         }
 
         .view-section {
@@ -227,61 +364,249 @@
             }
         }
 
-        /* Secciones y Carruseles Horizontales */
+        /* =========================================================
+           HERO BANNER ESTILO CHROME WEB STORE (CON ARTE ABSTRACTO)
+           ========================================================= */
+        .hero-banner-wrapper {
+            position: relative;
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border-strong);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), var(--glass-highlight);
+            margin-bottom: 36px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-slide {
+            position: relative;
+            padding: 38px 28px 56px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+            z-index: 2;
+            animation: slideFade 0.45s var(--bezier);
+        }
+
+        @keyframes slideFade {
+            from { opacity: 0; transform: scale(0.985) translateY(4px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .hero-bg-art {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            transition: background 0.6s var(--bezier);
+        }
+
+        .hero-bg-art::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08), transparent 70%);
+        }
+
+        .hero-bg-art svg {
+            width: 100%;
+            height: 100%;
+            opacity: 0.34;
+            mix-blend-mode: screen;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 13px;
+            border-radius: 100px;
+            background: rgba(0, 0, 0, 0.48);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .hero-title {
+            font-size: clamp(24px, 4vw, 35px);
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            max-width: 660px;
+            line-height: 1.15;
+        }
+
+        .hero-subtitle {
+            font-size: 14.5px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 540px;
+            line-height: 1.48;
+        }
+
+        /* Fila central de iconos flotantes estilo Chrome Web Store */
+        .hero-icons-showcase {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin: 6px 0;
+        }
+
+        .hero-app-tile {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            background: rgba(16, 16, 19, 0.88);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+            display: grid;
+            place-items: center;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: transform 0.3s var(--spring), border-color 0.25s var(--bezier), box-shadow 0.3s var(--bezier);
+        }
+
+        .hero-app-tile:hover {
+            transform: translateY(-5px) scale(1.07);
+            border-color: rgba(255, 255, 255, 0.45);
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.75), 0 0 20px rgba(255, 255, 255, 0.12);
+        }
+
+        .hero-cta-btn {
+            padding: 10px 22px;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            color: var(--text-main);
+            font-size: 13.5px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.25s var(--bezier), color 0.25s var(--bezier), transform 0.25s var(--spring);
+        }
+
+        .hero-cta-btn:hover {
+            background: var(--text-main);
+            color: var(--bg);
+            transform: translateY(-1px);
+        }
+
+        .hero-cta-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Controles inferiores derechos estilo Chrome Web Store (< 1/5 > ||) */
+        .hero-controls {
+            position: absolute;
+            bottom: 16px;
+            right: 20px;
+            z-index: 4;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 100px;
+            background: rgba(0, 0, 0, 0.56);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+            color: rgba(255, 255, 255, 0.88);
+        }
+
+        .hero-ctrl-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: rgba(255, 255, 255, 0.88);
+            transition: background 0.2s, color 0.2s, transform 0.2s var(--spring);
+        }
+
+        .hero-ctrl-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        .hero-ctrl-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* =========================================================
+           CATEGORÍAS PRINCIPALES Y SECCIONES DE CARRUSEL
+           ========================================================= */
         .shelf-section {
-            margin-bottom: 26px;
+            margin-bottom: 36px;
         }
 
         .shelf-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+
+        .shelf-title-group {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .shelf-title {
-            font-size: 16px;
+            font-size: 19px;
             font-weight: 600;
-            letter-spacing: -0.01em;
+            letter-spacing: -0.015em;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .shelf-count {
-            font-size: 12px;
-            font-weight: 400;
+        .shelf-subtitle {
+            font-size: 13px;
             color: var(--text-muted);
-            font-variant-numeric: tabular-nums;
+            font-weight: 300;
         }
 
         .carousel-controls {
-            display: none;
+            display: flex;
             align-items: center;
             gap: 6px;
+            transition: opacity 0.25s;
         }
 
-        @media (min-width: 680px) {
-            .carousel-controls {
-                display: flex;
-            }
+        .carousel-controls.hidden-controls {
+            display: none;
         }
 
         .carousel-nav-btn {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--surface);
             border: 1px solid var(--glass-border);
             display: grid;
             place-items: center;
             color: var(--text-muted);
-            transition: background 0.25s var(--bezier), color 0.25s var(--bezier), transform 0.25s var(--spring);
+            transition: background 0.25s var(--bezier), color 0.25s var(--bezier), border-color 0.25s var(--bezier), transform 0.25s var(--spring);
         }
 
         .carousel-nav-btn:hover {
             background: var(--surface-hover);
             color: var(--text-main);
+            border-color: var(--glass-border-strong);
         }
 
         .carousel-nav-btn:active {
@@ -290,7 +615,7 @@
 
         .carousel-track {
             display: flex;
-            gap: 14px;
+            gap: 16px;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
@@ -303,178 +628,203 @@
             display: none;
         }
 
-        /* Tarjeta Destacada Especial en Carrusel */
-        .featured-card {
+        /* Tarjetas de Categorías Principales */
+        .category-tile {
             scroll-snap-align: start;
-            flex: 0 0 86%;
-            background: radial-gradient(120% 120% at 0% 0%, rgba(255, 255, 255, 0.08) 0%, var(--surface) 65%);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            border-radius: 22px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 16px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: background 0.3s var(--bezier), border-color 0.3s var(--bezier), transform 0.3s var(--spring);
-        }
-
-        @media (min-width: 680px) {
-            .featured-card {
-                flex: 0 0 412px;
-            }
-        }
-
-        .featured-card:hover {
-            background: radial-gradient(120% 120% at 0% 0%, rgba(255, 255, 255, 0.12) 0%, var(--surface-hover) 65%);
-            border-color: rgba(255, 255, 255, 0.24);
-            transform: translateY(-2px);
-        }
-
-        .featured-card:active {
-            transform: scale(0.985);
-        }
-
-        .featured-top {
+            flex: 0 0 232px;
+            height: 76px;
+            border-radius: 18px;
+            padding: 0 18px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-highlight);
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s var(--spring), border-color 0.25s var(--bezier), box-shadow 0.3s var(--bezier);
         }
 
-        .featured-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 15px;
-            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03));
+        .category-tile:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.26);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.55), var(--glass-highlight);
+        }
+
+        .category-tile:active {
+            transform: scale(0.97);
+        }
+
+        .category-tile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            z-index: 1;
+        }
+
+        .category-tile-name {
+            font-size: 14.5px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .category-tile-count {
+            font-size: 11.5px;
+            color: rgba(255, 255, 255, 0.68);
+        }
+
+        .category-tile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.38);
             border: 1px solid rgba(255, 255, 255, 0.16);
             display: grid;
             place-items: center;
             color: var(--text-main);
+            z-index: 1;
             flex-shrink: 0;
+            transition: transform 0.3s var(--spring);
         }
 
-        .featured-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 11px;
-            border-radius: 100px;
-            background: rgba(52, 199, 89, 0.12);
-            border: 1px solid rgba(52, 199, 89, 0.28);
-            color: var(--accent-success);
-            font-size: 11.5px;
-            font-weight: 500;
+        .category-tile:hover .category-tile-icon {
+            transform: scale(1.08);
         }
 
-        .featured-body h3 {
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: -0.015em;
-            margin-bottom: 6px;
-        }
-
-        .featured-body p {
-            font-size: 13.5px;
-            font-weight: 300;
-            color: var(--text-muted);
-            line-height: 1.45;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .featured-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.07);
-            font-size: 12.5px;
-            color: var(--text-muted);
-            font-variant-numeric: tabular-nums;
-        }
-
-        /* Tarjeta Estándar en Carrusel de Categoría o Grid de Búsqueda */
+        /* =========================================================
+           TARJETAS DE EXTENSIÓN CON BANNER DE ARTE PROCEDURAL
+           ========================================================= */
         .ext-card {
             scroll-snap-align: start;
-            flex: 0 0 264px;
+            flex: 0 0 286px;
             background: var(--surface);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 18px;
+            box-shadow: var(--glass-highlight);
+            border-radius: 22px;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            gap: 14px;
             cursor: pointer;
-            transition: background 0.3s var(--bezier), border-color 0.3s var(--bezier), transform 0.3s var(--spring);
-        }
-
-        @media (min-width: 680px) {
-            .ext-card {
-                flex: 0 0 278px;
-            }
+            transition: background 0.3s var(--bezier), border-color 0.3s var(--bezier), transform 0.3s var(--spring), box-shadow 0.3s var(--bezier);
         }
 
         .ext-card:hover {
             background: var(--surface-hover);
-            border-color: rgba(255, 255, 255, 0.16);
-            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.22);
+            transform: translateY(-3px);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), var(--glass-highlight);
         }
 
         .ext-card:active {
             transform: scale(0.985);
         }
 
-        .search-results-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-
-        @media (min-width: 680px) {
-            .search-results-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 14px;
-            }
-        }
-
-        .search-results-grid .ext-card {
-            flex: initial;
-            width: 100%;
-        }
-
-        .card-top {
+        .card-cover {
+            height: 116px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--glass-border);
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: space-between;
-            gap: 10px;
+            padding: 14px 16px;
         }
 
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--glass-border);
+        .card-cover svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.4;
+            mix-blend-mode: screen;
+            pointer-events: none;
+            transition: transform 0.6s var(--bezier);
+        }
+
+        .ext-card:hover .card-cover svg {
+            transform: scale(1.05);
+        }
+
+        .card-floating-icon {
+            position: relative;
+            z-index: 2;
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
+            background: rgba(14, 14, 17, 0.88);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             display: grid;
             place-items: center;
             color: var(--text-main);
-            flex-shrink: 0;
+            transition: transform 0.3s var(--spring);
         }
 
-        .card-version {
-            font-size: 11.5px;
-            color: var(--text-muted);
+        .ext-card:hover .card-floating-icon {
+            transform: scale(1.06);
+        }
+
+        .card-badges-top {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        /* Sistema de Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-featured {
+            background: rgba(52, 199, 89, 0.16);
+            border: 1px solid rgba(52, 199, 89, 0.36);
+            color: #63E683;
+        }
+
+        .badge-version {
+            background: rgba(0, 0, 0, 0.58);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.88);
             font-variant-numeric: tabular-nums;
         }
 
+        .badge-neutral {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+        }
+
+        .badge-accent {
+            background: rgba(10, 132, 255, 0.16);
+            border: 1px solid rgba(10, 132, 255, 0.36);
+            color: #64B5F6;
+        }
+
+        .card-content {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1;
+            gap: 14px;
+        }
+
         .card-body h3 {
-            font-size: 16px;
+            font-size: 16.5px;
             font-weight: 600;
             letter-spacing: -0.01em;
             margin-bottom: 5px;
@@ -484,7 +834,7 @@
             font-size: 13px;
             font-weight: 300;
             color: var(--text-muted);
-            line-height: 1.45;
+            line-height: 1.48;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -496,17 +846,9 @@
             align-items: center;
             justify-content: space-between;
             padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             font-size: 12px;
             color: var(--text-muted);
-        }
-
-        .mini-tag {
-            padding: 3px 8px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-muted);
-            font-size: 11px;
         }
 
         .card-cta {
@@ -518,89 +860,148 @@
             transition: transform 0.3s var(--spring);
         }
 
-        .ext-card:hover .card-cta,
-        .featured-card:hover .card-cta {
+        .ext-card:hover .card-cta {
             transform: translateX(3px);
         }
 
-        /* Página Independiente de Detalle de Extensión */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .results-grid .ext-card {
+            flex: initial;
+            width: 100%;
+        }
+
+        /* =========================================================
+           PÁGINA DE DETALLE ESTILO CHROME WEB STORE
+           ========================================================= */
         .detail-page {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding-bottom: 24px;
+            gap: 24px;
         }
 
-        .detail-hero-bar {
+        .detail-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .detail-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .detail-breadcrumb button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 100px;
             background: var(--surface);
             border: 1px solid var(--glass-border);
-            border-radius: 22px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
+            color: var(--text-main);
+            font-weight: 500;
+            transition: background 0.2s, border-color 0.2s;
         }
 
-        @media (min-width: 680px) {
-            .detail-hero-bar {
+        .detail-breadcrumb button:hover {
+            background: var(--surface-hover);
+            border-color: var(--glass-border-strong);
+        }
+
+        .detail-header-block {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        @media (min-width: 740px) {
+            .detail-header-block {
                 flex-direction: row;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: space-between;
             }
         }
 
         .detail-identity {
             display: flex;
-            align-items: center;
-            gap: 16px;
-            min-width: 0;
+            align-items: flex-start;
+            gap: 18px;
         }
 
-        .detail-icon-lg {
-            width: 58px;
-            height: 58px;
-            border-radius: 18px;
-            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03));
-            border: 1px solid rgba(255, 255, 255, 0.16);
+        .detail-icon-xl {
+            width: 70px;
+            height: 70px;
+            border-radius: 21px;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.03));
+            border: 1px solid var(--glass-border-strong);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65), var(--glass-highlight);
             display: grid;
             place-items: center;
             flex-shrink: 0;
         }
 
-        .detail-titles h2 {
-            font-size: 21px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 4px;
+        .detail-title-area {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .detail-subtitle {
-            font-size: 13px;
+        .detail-title-area h2 {
+            font-size: clamp(22px, 3vw, 29px);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+        }
+
+        .detail-meta-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 13.5px;
             color: var(--text-muted);
+        }
+
+        .detail-badges-row {
             display: flex;
             align-items: center;
             gap: 8px;
             flex-wrap: wrap;
+            margin-top: 2px;
         }
 
-        .detail-actions {
+        .detail-cta-group {
             display: flex;
+            align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
             flex-shrink: 0;
         }
 
         .btn-primary {
-            padding: 12px 18px;
-            border-radius: 14px;
+            padding: 11px 22px;
+            border-radius: 100px;
             background: var(--text-main);
             color: var(--bg);
             font-size: 13.5px;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            transition: transform 0.25s var(--spring), opacity 0.25s var(--bezier);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.14);
+            transition: transform 0.25s var(--spring), opacity 0.25s var(--bezier), background 0.25s;
         }
 
         .btn-primary:hover {
@@ -612,17 +1013,23 @@
             transform: scale(0.97);
         }
 
+        .btn-primary.installed-state {
+            background: rgba(52, 199, 89, 0.18);
+            color: #63E683;
+            border: 1px solid rgba(52, 199, 89, 0.4);
+            box-shadow: none;
+        }
+
         .btn-secondary {
-            padding: 12px 16px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
+            padding: 11px 18px;
+            border-radius: 100px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border-strong);
             color: var(--text-main);
             font-size: 13.5px;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
             transition: background 0.25s var(--bezier), transform 0.25s var(--spring);
         }
@@ -635,390 +1042,585 @@
             transform: scale(0.97);
         }
 
-        .detail-section {
-            background: var(--surface);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
+        /* Galería / Carrusel de Capturas Generadas + Vista Previa */
+        .media-showcase-box {
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
 
-        .detail-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
+        .media-stage {
+            position: relative;
+            width: 100%;
+            height: 390px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border-strong);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+            overflow: hidden;
+            background: var(--surface);
+            transition: all 0.35s var(--bezier);
         }
 
-        .detail-section-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .media-stage.fullscreen-stage {
+            position: fixed;
+            inset: 16px;
+            width: auto;
+            height: auto;
+            z-index: 120;
+            box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.88), 0 24px 80px rgba(0, 0, 0, 0.9);
         }
 
-        .detail-description {
-            font-size: 14.5px;
-            font-weight: 300;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .tags-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-
-        @media (min-width: 680px) {
-            .meta-grid {
-                grid-template-columns: repeat(4, 1fr);
+        @media (max-width: 640px) {
+            .media-stage {
+                height: 310px;
             }
         }
 
-        .meta-box {
-            padding: 12px 14px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid var(--glass-border);
+        .stage-toolbar {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 6;
+            display: flex;
+            gap: 8px;
         }
 
-        .meta-box span {
-            display: block;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 3px;
-        }
-
-        .meta-box strong {
-            font-size: 13px;
+        .stage-tool-btn {
+            height: 32px;
+            padding: 0 12px;
+            border-radius: 100px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: #fff;
+            font-size: 12px;
             font-weight: 500;
-            font-variant-numeric: tabular-nums;
-            word-break: break-all;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s, transform 0.2s var(--spring);
         }
 
-        /* Contenedor de Vista Previa Manual */
-        .preview-placeholder {
-            border-radius: 16px;
-            border: 1px dashed rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.02);
-            padding: 36px 20px;
+        .stage-tool-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .stage-art-slide {
+            width: 100%;
+            height: 100%;
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            padding: 32px;
             text-align: center;
+            gap: 14px;
+            animation: slideFade 0.35s var(--bezier);
+        }
+
+        .stage-art-slide svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.38;
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+
+        .stage-card-mockup {
+            position: relative;
+            z-index: 2;
+            max-width: 490px;
+            width: 100%;
+            padding: 26px;
+            border-radius: 22px;
+            background: rgba(12, 12, 15, 0.8);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), var(--glass-highlight);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 12px;
         }
 
-        .preview-placeholder p {
-            font-size: 13px;
+        .stage-card-mockup h4 {
+            font-size: 18.5px;
+            font-weight: 600;
+        }
+
+        .stage-card-mockup p {
+            font-size: 13.5px;
             color: var(--text-muted);
-            max-width: 380px;
-            line-height: 1.5;
+            line-height: 1.52;
         }
 
-        .preview-frame-wrap {
-            width: 100%;
-            height: 460px;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            background: #080808;
-            overflow: hidden;
-            animation: viewEnter 0.4s var(--bezier) forwards;
-        }
-
-        .preview-frame-wrap iframe {
+        .media-stage iframe {
             width: 100%;
             height: 100%;
             border: none;
             background: #000000;
         }
 
-        /* Buscador Flotante (FAB Search) */
-        .fab-search-wrapper {
-            position: fixed;
-            bottom: calc(env(safe-area-inset-bottom) + 20px);
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 40;
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            max-width: 900px;
-            padding: 0 24px;
-            pointer-events: none;
-            transition: opacity 0.3s var(--bezier), transform 0.3s var(--bezier);
+        .stage-nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.62);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            transition: background 0.2s, transform 0.2s var(--spring);
         }
 
-        .fab-search-wrapper.hidden {
-            opacity: 0;
-            transform: translate(-50%, 16px);
-            pointer-events: none;
+        .stage-nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.22);
         }
 
-        .fab-search {
-            pointer-events: auto;
-            height: 48px;
-            width: 48px;
-            border-radius: 100px;
-            background: var(--glass);
-            backdrop-filter: blur(var(--blur-val));
-            -webkit-backdrop-filter: blur(var(--blur-val));
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+        .stage-nav-arrow.prev { left: 14px; }
+        .stage-nav-arrow.next { right: 14px; }
+
+        /* Miniaturas inferiores */
+        .media-thumbnails {
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 4px 0;
+        }
+
+        .thumb-btn {
+            width: 92px;
+            height: 54px;
+            border-radius: 13px;
+            border: 2px solid transparent;
             overflow: hidden;
-            transition: width 0.45s var(--bezier), background 0.3s var(--bezier), border-color 0.3s var(--bezier);
-        }
-
-        .fab-search.expanded {
-            width: 100%;
-            max-width: 420px;
-            padding: 0 16px;
-            justify-content: space-between;
-            background: rgba(24, 24, 26, 0.88);
-            border-color: rgba(255, 255, 255, 0.22);
-        }
-
-        .fab-trigger {
-            width: 46px;
-            height: 46px;
+            position: relative;
+            background: var(--surface);
             display: grid;
             place-items: center;
-            color: var(--text-main);
             flex-shrink: 0;
+            opacity: 0.62;
+            transition: opacity 0.25s, border-color 0.25s, transform 0.25s var(--spring);
         }
 
-        .fab-search.expanded .fab-trigger {
-            width: auto;
-            margin-right: 10px;
-            color: var(--text-muted);
+        .thumb-btn:hover {
+            opacity: 0.92;
         }
 
-        .fab-input {
-            width: 0;
-            opacity: 0;
-            font-size: 14px;
-            color: var(--text-main);
-            transition: opacity 0.25s var(--bezier);
-        }
-
-        .fab-search.expanded .fab-input {
-            width: 100%;
+        .thumb-btn.active {
             opacity: 1;
+            border-color: var(--text-main);
+            transform: translateY(-2px);
         }
 
-        .fab-clear {
-            display: none;
+        .thumb-label {
+            position: relative;
+            z-index: 2;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 3px 7px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Bloques de Información de Detalle */
+        .detail-section-block {
+            padding: 22px 0;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .detail-section-block:last-child {
+            border-bottom: none;
+        }
+
+        .detail-section-block h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+        }
+
+        .detail-desc-text {
+            font-size: 14.5px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.84);
+            line-height: 1.68;
+            max-width: 780px;
+        }
+
+        .details-specs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        @media (min-width: 680px) {
+            .details-specs-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .spec-item {
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .spec-item span {
+            font-size: 11.5px;
             color: var(--text-muted);
-            padding: 4px;
-            transition: color 0.2s var(--bezier), transform 0.2s var(--spring);
         }
 
-        .fab-search.expanded .fab-clear.visible {
+        .spec-item strong {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        /* =========================================================
+           MODAL DE INSTALACIÓN RÁPIDA Y TOAST FLOTANTE
+           ========================================================= */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 150;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: blur(12px);
+            display: none;
+            place-items: center;
+            padding: 20px;
+            animation: fadeIn 0.25s var(--bezier);
+        }
+
+        .modal-backdrop.open {
+            display: grid;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 440px;
+            border-radius: 24px;
+            background: #141417;
+            border: 1px solid var(--glass-border-strong);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), var(--glass-highlight);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            animation: modalPop 0.35s var(--spring);
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.94) translateY(8px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
             display: grid;
             place-items: center;
+            color: var(--text-muted);
+            transition: color 0.2s, background 0.2s;
         }
 
-        .fab-clear:hover {
+        .modal-close:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .url-copy-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: #0a0a0c;
+            border: 1px solid var(--glass-border);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .url-copy-box span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: monospace;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: calc(env(safe-area-inset-bottom) + 24px);
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            z-index: 200;
+            padding: 10px 18px;
+            border-radius: 100px;
+            background: rgba(24, 24, 28, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border-strong);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+            font-size: 13px;
+            font-weight: 500;
             color: var(--text-main);
-            transform: scale(1.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s var(--bezier), transform 0.35s var(--spring);
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* Estados Vacíos y Skeletons */
         .empty-state {
-            padding: 56px 20px;
+            padding: 64px 20px;
             text-align: center;
             background: var(--surface);
-            border: 1px dashed var(--glass-border);
-            border-radius: 20px;
+            border: 1px dashed var(--glass-border-strong);
+            border-radius: 22px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .empty-state h3 {
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 17px;
+            font-weight: 600;
         }
 
         .empty-state p {
-            font-size: 13px;
+            font-size: 13.5px;
             color: var(--text-muted);
-            max-width: 340px;
+            max-width: 380px;
+            line-height: 1.5;
         }
 
-        .skeleton-row {
-            display: flex;
-            gap: 14px;
-            overflow: hidden;
-        }
-
-        .skeleton-card {
-            flex: 0 0 278px;
-            height: 164px;
-            border-radius: 20px;
+        .skeleton-hero {
+            height: 300px;
+            border-radius: 28px;
             background: var(--surface);
             border: 1px solid var(--glass-border);
+            margin-bottom: 32px;
             position: relative;
             overflow: hidden;
         }
 
-        .skeleton-card::after {
+        .skeleton-hero::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
             transform: translateX(-100%);
             animation: shimmer 1.4s infinite var(--bezier);
         }
 
         @keyframes shimmer {
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-4px); }
-        }
-
-        .error-shake {
-            animation: shake 0.3s var(--bezier);
-            border-color: var(--accent-danger) !important;
+            100% { transform: translateX(100%); }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container" id="main-view">
-        <header id="app-header"></header>
-        <nav class="folders-scroll-area" id="category-pills" aria-label="Categorías de extensiones"></nav>
-        <main class="main-content" id="main-content"></main>
-    </div>
+    <!-- Barra Superior Estilo Chrome Web Store -->
+    <header class="top-navbar">
+        <div class="navbar-inner">
+            <div class="navbar-top-row">
+                <div class="brand-logo" id="brand-home-btn" role="button" tabindex="0" aria-label="Ir a inicio">
+                    <div class="app-icon-badge">
+                        <i data-lucide="puzzle" size="19" style="color: var(--text-main);"></i>
+                    </div>
+                    <div class="brand-title-wrap">
+                        <h1>Extensiones</h1>
+                        <span class="header-counter" id="tools-counter"></span>
+                    </div>
+                </div>
 
-    <!-- Buscador Flotante -->
-    <div class="fab-search-wrapper" id="fab-wrapper">
-        <div class="fab-search" id="fab-search">
-            <button class="fab-trigger" id="fab-trigger" aria-label="Buscar extensiones">
-                <i data-lucide="search" size="18"></i>
-            </button>
-            <input type="text" class="fab-input" id="search-input" placeholder="Buscar extensión, etiqueta o autor...">
-            <button class="fab-clear" id="fab-clear" aria-label="Limpiar búsqueda">
-                <i data-lucide="x" size="16"></i>
-            </button>
+                <div class="search-bar-pill">
+                    <i data-lucide="search" size="16" style="color: var(--text-muted); flex-shrink: 0;"></i>
+                    <input type="text" id="search-input" placeholder="Buscar extensiones, funciones o etiquetas...">
+                    <span class="kbd-hint">/</span>
+                    <button class="search-clear-btn" id="search-clear" aria-label="Limpiar búsqueda">
+                        <i data-lucide="x" size="14"></i>
+                    </button>
+                </div>
+
+                <div class="header-actions-right">
+                    <button class="header-action icon-only" id="btn-sync-catalog" title="Sincronizar catálogo" aria-label="Sincronizar catálogo">
+                        <i data-lucide="refresh-cw" size="15"></i>
+                    </button>
+                    <a class="header-action" href="https://github.com/CapybaraGalaxy/homescreen-online/tree/main/custom-tools" target="_blank" rel="noopener">
+                        <i data-lucide="Code" size="15"></i>
+                        <span>Repositorio</span>
+                    </a>
+                </div>
+            </div>
+
+            <nav class="nav-tabs-row" id="nav-tabs" aria-label="Navegación principal"></nav>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="app-container" id="main-content"></main>
+
+    <!-- Modal de Obtención / Integración -->
+    <div class="modal-backdrop" id="install-modal" role="dialog" aria-modal="true" aria-labelledby="modal-ext-title">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-ext-title">Obtener extensión</h3>
+                <button class="modal-close" id="btn-close-modal" aria-label="Cerrar">
+                    <i data-lucide="x" size="16"></i>
+                </button>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5;" id="modal-ext-desc">
+                Copia el enlace directo del módulo para añadirlo a tu Homescreen o descarga el archivo fuente.
+            </p>
+            <div class="url-copy-box">
+                <span id="modal-ext-url">https://...</span>
+                <button class="btn-secondary" id="btn-copy-raw-url" style="padding: 6px 12px; font-size: 12px; flex-shrink: 0;">
+                    <i data-lucide="copy" size="13"></i>
+                    <span>Copiar</span>
+                </button>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px;">
+                <a class="btn-secondary" id="modal-open-file" href="#" target="_blank" rel="noopener" style="text-decoration: none;">
+                    <i data-lucide="external-link" size="14"></i>
+                    <span>Abrir archivo</span>
+                </a>
+                <button class="btn-primary" id="btn-confirm-install">
+                    <i data-lucide="check" size="15"></i>
+                    <span>Marcar obtenida</span>
+                </button>
+            </div>
         </div>
     </div>
+
+    <!-- Notificación Toast Flotante -->
+    <div class="toast-notification" id="toast-msg" role="status" aria-live="polite"></div>
 
     <script>
         const BASE_URL = 'https://raw.githubusercontent.com/CapybaraGalaxy/homescreen-online/main/custom-tools/';
         const REPO_URL = 'https://github.com/CapybaraGalaxy/homescreen-online/tree/main/custom-tools';
-        const STORAGE_KEY = 'neo_extensions_store_v2';
+        const STORAGE_KEY = 'neo_extensions_store_v4';
 
         const VALID_LUCIDE_ICONS = new Set([
             'flask-conical', 'wrench', 'calculator', 'clock', 'palette', 'box',
             'layers', 'terminal', 'compass', 'cpu', 'sliders', 'sparkles',
             'calendar', 'check-square', 'file-text', 'globe', 'music', 'camera',
-            'puzzle', 'blocks', 'code', 'zap', 'shield', 'bar-chart-2'
+            'puzzle', 'blocks', 'code', 'zap', 'shield', 'bar-chart-2', 'wand-2',
+            'layout', 'grid', 'bookmark', 'eye', 'rocket'
         ]);
+
+        const ART_PALETTES = [
+            { bg: 'linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #0f1015 100%)', stroke: '#38bdf8' },
+            { bg: 'linear-gradient(135deg, #1a1025 0%, #2d1b4e 50%, #111015 100%)', stroke: '#c084fc' },
+            { bg: 'linear-gradient(135deg, #0c2218 0%, #143d2b 50%, #0e1210 100%)', stroke: '#34d399' },
+            { bg: 'linear-gradient(135deg, #271710 0%, #432315 50%, #14100e 100%)', stroke: '#fb923c' },
+            { bg: 'linear-gradient(135deg, #121826 0%, #1e293b 50%, #0c0e14 100%)', stroke: '#818cf8' },
+            { bg: 'linear-gradient(135deg, #23111c 0%, #3f182e 50%, #120d10 100%)', stroke: '#f472b6' }
+        ];
 
         const FALLBACK_EXTENSIONS = [
             {
-                id: 'calc-pro',
-                name: 'Calculadora Científica',
-                description: 'Operaciones algebraicas rápidas, historial de expresiones y conversión de unidades en tiempo real.',
-                category: 'Utilidades',
-                version: '1.2.0',
-                author: 'NEO Core',
-                icon: 'calculator',
-                tags: ['matemáticas', 'cálculo', 'conversor'],
+                id: 'fluid-ai',
+                name: 'FluidAI',
+                description: 'Asistente contextual integrado para agilizar consultas, redactar contenido y automatizar tareas rápidas directamente desde tu entorno.',
+                category: 'Inteligencia Artificial',
+                version: '1.0.0',
+                author: 'Guilleplayer',
+                icon: 'sparkles',
+                tags: ['ia', 'productividad', 'asistente'],
                 featured: true,
                 status: 'Estable',
-                file: 'calculator.html',
+                file: 'fluidai.html',
                 order: 1
-            },
-            {
-                id: 'pomodoro-focus',
-                name: 'Temporizador de Enfoque',
-                description: 'Gestión de bloques de trabajo profundo con intervalos configurables y alertas visuales discretas.',
-                category: 'Productividad',
-                version: '1.0.4',
-                author: 'NEO Core',
-                icon: 'clock',
-                tags: ['tiempo', 'enfoque', 'rutina'],
-                featured: true,
-                status: 'Estable',
-                file: 'timer.html',
-                order: 2
-            },
-            {
-                id: 'color-studio',
-                name: 'Selector Cromático',
-                description: 'Extracción y conversión instantánea entre formatos HEX, RGB y HSL con validación de contraste.',
-                category: 'Diseño',
-                version: '1.1.0',
-                author: 'Comunidad',
-                icon: 'palette',
-                tags: ['color', 'css', 'contraste'],
-                featured: false,
-                status: 'Estable',
-                file: 'palette.html',
-                order: 3
-            },
-            {
-                id: 'json-formatter',
-                name: 'Inspector JSON',
-                description: 'Formateo, validación sintáctica y exploración estructurada de cargas útiles JSON sin salir del entorno.',
-                category: 'Desarrollo',
-                version: '1.3.1',
-                author: 'Comunidad',
-                icon: 'code',
-                tags: ['json', 'datos', 'depuración'],
-                featured: false,
-                status: 'Estable',
-                file: 'json.html',
-                order: 4
             }
         ];
 
         let appData = {
             extensions: [],
-            selectedCategory: 'Todas',
+            installedIds: [],
+            activeTab: 'Descubrir',
             searchQuery: '',
-            currentRoute: 'catalog', // 'catalog' | 'detail'
+            currentRoute: 'catalog',
             selectedExtensionId: null,
-            previewVisible: false,
+            heroSlideIndex: 0,
+            heroPaused: false,
+            detailSlideIndex: 0,
+            previewFullscreen: false,
             previewHtml: '',
             previewLoading: false,
             isLoading: true
         };
 
+        let heroInterval = null;
+        let toastTimeout = null;
+
         function saveData() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    selectedCategory: appData.selectedCategory,
-                    extensionsCache: appData.extensions
+                    extensionsCache: appData.extensions,
+                    installedIds: appData.installedIds
                 }));
-            } catch (e) {
-                /* Silencio si almacenamiento no disponible */
-            }
+            } catch (e) {}
+        }
+
+        function showToast(message, iconName = 'check-circle-2') {
+            const toast = document.getElementById('toast-msg');
+            toast.innerHTML = `<i data-lucide="${iconName}" size="15" style="color: var(--accent-success);"></i><span>${escapeHTML(message)}</span>`;
+            lucide.createIcons({ root: toast });
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2600);
         }
 
         function escapeHTML(str) {
@@ -1044,13 +1646,96 @@
                 .replace(/^-|-$/g, '');
         }
 
-        function triggerShake(element) {
-            element.classList.remove('error-shake');
-            void element.offsetWidth;
-            element.classList.add('error-shake');
-            setTimeout(() => element.classList.remove('error-shake'), 300);
+        function hashString(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash);
         }
 
+        /* =========================================================
+           GENERADOR DE ARTE ABSTRACTO Y DEGRADADOS (SIN FOTOS)
+           ========================================================= */
+        function generateAbstractArt(seedText, variantOffset = 0) {
+            const hash = hashString(String(seedText || 'neo')) + variantOffset;
+            const palette = ART_PALETTES[hash % ART_PALETTES.length];
+            const patternType = hash % 4;
+            const c = palette.stroke;
+
+            let svgPattern = '';
+            if (patternType === 0) {
+                svgPattern = `
+                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="p-${hash}" width="80" height="80" patternUnits="userSpaceOnUse">
+                                <rect x="4" y="4" width="34" height="34" rx="10" fill="none" stroke="${c}" stroke-width="1.2" stroke-opacity="0.45"/>
+                                <rect x="42" y="42" width="34" height="34" rx="10" fill="${c}" fill-opacity="0.08" stroke="${c}" stroke-width="1.2" stroke-opacity="0.35"/>
+                                <circle cx="59" cy="21" r="10" fill="none" stroke="${c}" stroke-width="1.2" stroke-opacity="0.35"/>
+                                <circle cx="21" cy="59" r="6" fill="${c}" fill-opacity="0.25"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#p-${hash})"/>
+                    </svg>
+                `;
+            } else if (patternType === 1) {
+                svgPattern = `
+                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none" stroke="${c}" stroke-width="1.3">
+                            <circle cx="320" cy="40" r="65" stroke-opacity="0.35"/>
+                            <circle cx="320" cy="40" r="105" stroke-opacity="0.25"/>
+                            <circle cx="320" cy="40" r="145" stroke-opacity="0.15"/>
+                            <path d="M-20 160 Q 110 90, 220 150 T 430 120" stroke-opacity="0.4"/>
+                            <path d="M-20 185 Q 110 115, 220 175 T 430 145" stroke-opacity="0.22"/>
+                        </g>
+                    </svg>
+                `;
+            } else if (patternType === 2) {
+                svgPattern = `
+                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="g-${hash}" width="48" height="48" patternUnits="userSpaceOnUse">
+                                <path d="M 48 0 L 0 0 0 48" fill="none" stroke="${c}" stroke-width="1" stroke-opacity="0.25"/>
+                                <circle cx="0" cy="0" r="2.2" fill="${c}" fill-opacity="0.5"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#g-${hash})"/>
+                        <circle cx="290" cy="100" r="70" fill="${c}" fill-opacity="0.12"/>
+                    </svg>
+                `;
+            } else {
+                svgPattern = `
+                    <svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="none" stroke="${c}" stroke-width="1.2">
+                            <ellipse cx="200" cy="100" rx="150" ry="52" transform="rotate(-14 200 100)" stroke-opacity="0.35"/>
+                            <ellipse cx="200" cy="100" rx="150" ry="52" transform="rotate(14 200 100)" stroke-opacity="0.22"/>
+                            <circle cx="95" cy="72" r="5" fill="${c}" fill-opacity="0.55"/>
+                            <circle cx="305" cy="128" r="7" fill="${c}" fill-opacity="0.35"/>
+                        </g>
+                    </svg>
+                `;
+            }
+
+            return {
+                background: palette.bg,
+                svg: svgPattern
+            };
+        }
+
+        function getCategoryIcon(categoryName) {
+            const cat = (categoryName || '').toLowerCase();
+            if (cat.includes('ia') || cat.includes('inteligencia')) return 'sparkles';
+            if (cat.includes('util')) return 'wrench';
+            if (cat.includes('prod')) return 'clock';
+            if (cat.includes('diseñ')) return 'palette';
+            if (cat.includes('desarr') || cat.includes('dev')) return 'code';
+            return 'layers';
+        }
+
+        /* =========================================================
+           NAVEGACIÓN Y RUTAS
+           ========================================================= */
         function navigateToExtension(slug, pushHistory = true) {
             const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === slug);
             if (!ext) {
@@ -1059,7 +1744,8 @@
             }
             appData.currentRoute = 'detail';
             appData.selectedExtensionId = slug;
-            appData.previewVisible = false;
+            appData.detailSlideIndex = 0;
+            appData.previewFullscreen = false;
             appData.previewHtml = '';
             appData.previewLoading = false;
 
@@ -1067,13 +1753,13 @@
                 window.history.pushState({ route: 'detail', slug }, '', '#extension/' + encodeURIComponent(slug));
             }
             renderApp();
-            document.getElementById('main-content').scrollTop = 0;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function navigateToCatalog(pushHistory = true) {
             appData.currentRoute = 'catalog';
             appData.selectedExtensionId = null;
-            appData.previewVisible = false;
+            appData.previewFullscreen = false;
             appData.previewHtml = '';
             appData.previewLoading = false;
 
@@ -1096,130 +1782,261 @@
                 if (exists) {
                     appData.currentRoute = 'detail';
                     appData.selectedExtensionId = slug;
-                    appData.previewVisible = false;
-                    appData.previewHtml = '';
                     return;
                 }
             }
             appData.currentRoute = 'catalog';
             appData.selectedExtensionId = null;
-            appData.previewVisible = false;
-            appData.previewHtml = '';
         }
 
-        function loadManualPreview() {
-            const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
-            if (!ext || !ext.file) return;
-
-            appData.previewVisible = true;
+        function loadInteractivePreview(ext, forceReload = false) {
+            if (!ext || !ext.file || appData.previewLoading) return;
+            if (forceReload) appData.previewHtml = '';
             appData.previewLoading = true;
             renderApp();
 
-            fetch(BASE_URL + ext.file)
+            fetch(BASE_URL + ext.file, { cache: 'no-store' })
                 .then(res => {
                     if (!res.ok) throw new Error('Error de red');
                     return res.text();
                 })
                 .then(html => {
-                    if (appData.selectedExtensionId === getExtensionSlug(ext, appData.extensions.indexOf(ext))) {
-                        appData.previewHtml = html;
-                        appData.previewLoading = false;
-                        renderApp();
-                    }
+                    appData.previewHtml = html;
+                    appData.previewLoading = false;
+                    renderApp();
                 })
                 .catch(() => {
-                    appData.previewHtml = '<div style="display:grid;place-items:center;height:100%;background:#000;color:#8E8E93;font-family:sans-serif;font-size:13px;padding:24px;text-align:center;">No se pudo obtener el archivo de vista previa desde el repositorio remoto.</div>';
+                    appData.previewHtml = '<div style="display:grid;place-items:center;height:100%;background:#0a0a0c;color:#8E8E93;font-family:sans-serif;font-size:13px;padding:24px;text-align:center;">No se pudo cargar la vista previa remota. Puedes abrir el archivo fuente desde el botón superior.</div>';
                     appData.previewLoading = false;
                     renderApp();
                 });
         }
 
-        function renderHeader() {
-            const headerEl = document.getElementById('app-header');
+        /* =========================================================
+           HERO BANNER SLIDES
+           ========================================================= */
+        function getHeroSlides() {
+            const exts = appData.extensions;
+            const slides = [];
 
-            if (appData.currentRoute === 'detail') {
-                const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
-                headerEl.innerHTML = `
-                    <div class="header-left">
-                        <button class="header-action" id="btn-back-catalog" aria-label="Volver al catálogo">
-                            <i data-lucide="arrow-left" size="16"></i>
-                            <span>Catálogo</span>
-                        </button>
-                        <div class="title-group">
-                            <h1>${escapeHTML(ext ? ext.name : 'Detalle de Extensión')}</h1>
-                        </div>
-                    </div>
-                    <a class="header-action" href="${REPO_URL}" target="_blank" rel="noopener">
-                        <i data-lucide="github" size="15"></i>
-                        <span>Repositorio</span>
-                    </a>
-                `;
-                return;
+            slides.push({
+                eyebrow: exts.length === 1 ? 'Destacada · v' + (exts[0].version || '1.0') : 'Colección Oficial',
+                title: exts.length === 1
+                    ? `Descubre ${exts[0].name}`
+                    : 'Potencia tu entorno con extensiones modulares',
+                subtitle: exts.length === 1
+                    ? (exts[0].description || 'Herramienta ligera diseñada para integrarse sin fricción en tu flujo diario.')
+                    : 'Herramientas ligeras, minimalistas y listas para usar en tu navegador o Homescreen.',
+                icons: exts.slice(0, 6),
+                ctaLabel: exts.length === 1 ? 'Abrir ficha y vista previa' : 'Explorar catálogo',
+                actionType: exts.length === 1 ? 'open-ext' : 'tab-all',
+                targetSlug: exts.length === 1 ? getExtensionSlug(exts[0], 0) : null,
+                seed: 'hero-welcome'
+            });
+
+            if (exts.length > 1) {
+                exts.slice(0, 4).forEach((ext, idx) => {
+                    slides.push({
+                        eyebrow: ext.featured ? 'Destacada' : (ext.category || 'Extensión'),
+                        title: ext.name,
+                        subtitle: ext.description || 'Explora los detalles técnicos y prueba esta extensión.',
+                        icons: [ext],
+                        ctaLabel: 'Abrir ficha',
+                        actionType: 'open-ext',
+                        targetSlug: getExtensionSlug(ext, idx),
+                        seed: ext.id || ext.name
+                    });
+                });
+            } else if (exts.length === 1) {
+                const single = exts[0];
+                const tagsText = (single.tags && single.tags.length > 0)
+                    ? single.tags.map(t => `#${t}`).join(' · ')
+                    : 'Arquitectura modular lista para escalar';
+                slides.push({
+                    eyebrow: single.category || 'Ecosistema Modular',
+                    title: 'Prueba en vivo o integra en tu Homescreen',
+                    subtitle: `Ejecuta la demostración interactiva sin salir de la tienda. ${tagsText}.`,
+                    icons: [single],
+                    ctaLabel: 'Probar demostración',
+                    actionType: 'open-ext-preview',
+                    targetSlug: getExtensionSlug(single, 0),
+                    seed: (single.id || single.name) + '-alt'
+                });
             }
 
-            const totalCount = appData.extensions.length;
-            headerEl.innerHTML = `
-                <div class="header-left">
-                    <div class="app-icon-badge">
-                        <i data-lucide="puzzle" size="20" style="color: var(--text-main);"></i>
+            return slides;
+        }
+
+        function startHeroTimer() {
+            stopHeroTimer();
+            if (appData.heroPaused || appData.currentRoute !== 'catalog' || appData.searchQuery.trim()) return;
+            heroInterval = setInterval(() => {
+                const slides = getHeroSlides();
+                if (slides.length > 1) {
+                    appData.heroSlideIndex = (appData.heroSlideIndex + 1) % slides.length;
+                    renderHeroOnly();
+                }
+            }, 6500);
+        }
+
+        function stopHeroTimer() {
+            if (heroInterval) {
+                clearInterval(heroInterval);
+                heroInterval = null;
+            }
+        }
+
+        function renderHeroOnly() {
+            const heroContainer = document.getElementById('hero-banner-slot');
+            if (!heroContainer) return;
+            heroContainer.innerHTML = buildHeroHTML();
+            lucide.createIcons({ root: heroContainer });
+        }
+
+        function buildHeroHTML() {
+            const slides = getHeroSlides();
+            if (slides.length === 0) return '';
+            const safeIdx = appData.heroSlideIndex % slides.length;
+            const slide = slides[safeIdx];
+            const art = generateAbstractArt(slide.seed, safeIdx);
+
+            return `
+                <section class="hero-banner-wrapper" aria-label="Destacados">
+                    <div class="hero-bg-art" style="background: ${art.background};">
+                        ${art.svg}
                     </div>
-                    <div class="title-group">
-                        <h1>Tienda de Extensiones</h1>
-                        <span class="header-counter" id="tools-counter">${appData.isLoading && totalCount === 0 ? 'Sincronizando...' : `${totalCount} ${totalCount === 1 ? 'extensión' : 'extensiones'}`}</span>
+
+                    <div class="hero-slide">
+                        <span class="hero-eyebrow">
+                            <i data-lucide="sparkles" size="13" style="color: var(--accent-success);"></i>
+                            <span>${escapeHTML(slide.eyebrow)}</span>
+                        </span>
+
+                        <h2 class="hero-title">${escapeHTML(slide.title)}</h2>
+                        <p class="hero-subtitle">${escapeHTML(slide.subtitle)}</p>
+
+                        <div class="hero-icons-showcase">
+                            ${slide.icons.map(item => {
+                                const slug = getExtensionSlug(item, appData.extensions.indexOf(item));
+                                return `
+                                    <button class="hero-app-tile" data-slug="${escapeHTML(slug)}" title="${escapeHTML(item.name)}">
+                                        <i data-lucide="${resolveSafeIcon(item.icon)}" size="25"></i>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <button class="hero-cta-btn" id="hero-main-cta"
+                            data-action="${escapeHTML(slide.actionType)}"
+                            data-slug="${escapeHTML(slide.targetSlug || '')}">
+                            <span>${escapeHTML(slide.ctaLabel)}</span>
+                            <i data-lucide="arrow-right" size="15"></i>
+                        </button>
                     </div>
-                </div>
-                <a class="header-action" href="${REPO_URL}" target="_blank" rel="noopener">
-                    <i data-lucide="github" size="15"></i>
-                    <span>Repositorio</span>
-                </a>
+
+                    <div class="hero-controls">
+                        <button class="hero-ctrl-btn" id="hero-prev" aria-label="Anterior">
+                            <i data-lucide="chevron-left" size="15"></i>
+                        </button>
+                        <span>${safeIdx + 1} / ${slides.length}</span>
+                        <button class="hero-ctrl-btn" id="hero-next" aria-label="Siguiente">
+                            <i data-lucide="chevron-right" size="15"></i>
+                        </button>
+                        <button class="hero-ctrl-btn" id="hero-pause" aria-label="${appData.heroPaused ? 'Reanudar' : 'Pausar'}">
+                            <i data-lucide="${appData.heroPaused ? 'play' : 'pause'}" size="13"></i>
+                        </button>
+                    </div>
+                </section>
             `;
         }
 
-        function renderCategoryPills() {
-            const pillsEl = document.getElementById('category-pills');
-            if (appData.currentRoute === 'detail') {
-                pillsEl.style.display = 'none';
-                return;
-            }
-            pillsEl.style.display = 'flex';
+        /* =========================================================
+           RENDERIZADO DE PESTAÑAS Y CATÁLOGO
+           ========================================================= */
+        function renderTopNavigation() {
+            const counterEl = document.getElementById('tools-counter');
+            const total = appData.extensions.length;
+            counterEl.textContent = appData.isLoading && total === 0
+                ? 'Sincronizando...'
+                : `${total} ${total === 1 ? 'disponible' : 'disponibles'}`;
 
-            const categories = ['Todas', ...new Set(appData.extensions.map(t => t.category).filter(Boolean))];
-            if (!categories.includes(appData.selectedCategory)) {
-                appData.selectedCategory = 'Todas';
+            const tabsEl = document.getElementById('nav-tabs');
+            const categories = [...new Set(appData.extensions.map(e => e.category).filter(Boolean))];
+            const tabs = ['Descubrir', 'Todas', ...categories];
+
+            if (!tabs.includes(appData.activeTab)) {
+                appData.activeTab = 'Descubrir';
             }
 
-            pillsEl.innerHTML = categories.map(cat => `
-                <button class="pill-btn ${appData.selectedCategory === cat ? 'active' : ''}" data-cat="${escapeHTML(cat)}">
-                    ${escapeHTML(cat)}
-                </button>
-            `).join('');
+            tabsEl.innerHTML = tabs.map(tab => {
+                const isActive = appData.currentRoute === 'catalog' && !appData.searchQuery.trim() && appData.activeTab === tab;
+                return `
+                    <button class="nav-tab ${isActive ? 'active' : ''}" data-tab="${escapeHTML(tab)}">
+                        ${escapeHTML(tab)}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderStandardCard(ext) {
+            const idx = appData.extensions.indexOf(ext);
+            const slug = getExtensionSlug(ext, idx);
+            const safeIcon = resolveSafeIcon(ext.icon);
+            const art = generateAbstractArt(ext.id || ext.name, idx);
+            const primaryTag = (ext.tags && ext.tags[0]) ? `#${ext.tags[0]}` : (ext.author || 'Extensión');
+            const isInstalled = appData.installedIds.includes(slug);
+
+            return `
+                <article class="ext-card" data-slug="${escapeHTML(slug)}">
+                    <div class="card-cover" style="background: ${art.background};">
+                        ${art.svg}
+                        <div class="card-floating-icon">
+                            <i data-lucide="${safeIcon}" size="21"></i>
+                        </div>
+                        <div class="card-badges-top">
+                            ${isInstalled ? '<span class="badge badge-accent"><i data-lucide="check" size="11"></i> Obtenida</span>' : ''}
+                            ${ext.featured && !isInstalled ? '<span class="badge badge-featured"><i data-lucide="sparkles" size="11"></i> Destacada</span>' : ''}
+                            <span class="badge badge-version">v${escapeHTML(ext.version || '1.0')}</span>
+                        </div>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="card-body">
+                            <h3>${escapeHTML(ext.name)}</h3>
+                            <p>${escapeHTML(ext.description || 'Sin descripción disponible.')}</p>
+                        </div>
+
+                        <div class="card-footer">
+                            <span class="badge badge-neutral">${escapeHTML(primaryTag)}</span>
+                            <span class="card-cta">
+                                <span>Detalles</span>
+                                <i data-lucide="chevron-right" size="14"></i>
+                            </span>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function updateCarouselControlsVisibility() {
+            document.querySelectorAll('.carousel-track').forEach(track => {
+                const controls = document.querySelector(`[data-controls-for="${track.id}"]`);
+                if (!controls) return;
+                const hasOverflow = track.scrollWidth > track.clientWidth + 4;
+                controls.classList.toggle('hidden-controls', !hasOverflow);
+            });
         }
 
         function renderCatalogView(container) {
             if (appData.isLoading && appData.extensions.length === 0) {
-                container.innerHTML = `
-                    <div class="view-section">
-                        <div class="shelf-section">
-                            <div class="shelf-header"><div class="shelf-title">Cargando catálogo...</div></div>
-                            <div class="skeleton-row">
-                                <div class="skeleton-card"></div>
-                                <div class="skeleton-card"></div>
-                                <div class="skeleton-card"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                container.innerHTML = `<div class="skeleton-hero"></div>`;
                 return;
             }
 
             const query = appData.searchQuery.trim().toLowerCase();
 
-            // Modo Búsqueda Activa o Filtro de Categoría Específica
-            if (query || appData.selectedCategory !== 'Todas') {
+            if (query) {
                 const filtered = appData.extensions.filter(ext => {
-                    const matchesCat = appData.selectedCategory === 'Todas' || ext.category === appData.selectedCategory;
-                    if (!matchesCat) return false;
-                    if (!query) return true;
                     const haystack = [
                         ext.name,
                         ext.description,
@@ -1230,17 +2047,13 @@
                     return haystack.includes(query);
                 });
 
-                const sectionLabel = query
-                    ? `Resultados para "${appData.searchQuery.trim()}"`
-                    : appData.selectedCategory;
-
                 if (filtered.length === 0) {
                     container.innerHTML = `
                         <div class="view-section">
                             <div class="empty-state">
-                                <i data-lucide="search-x" size="28" style="color: var(--text-muted);"></i>
-                                <h3>Sin resultados</h3>
-                                <p>No se encontraron extensiones que coincidan con tu búsqueda o categoría seleccionada.</p>
+                                <i data-lucide="search-x" size="30" style="color: var(--text-muted);"></i>
+                                <h3>Sin resultados para "${escapeHTML(appData.searchQuery.trim())}"</h3>
+                                <p>Prueba con otro término, categoría o etiqueta diferente.</p>
                             </div>
                         </div>
                     `;
@@ -1251,12 +2064,12 @@
                     <div class="view-section">
                         <section class="shelf-section">
                             <div class="shelf-header">
-                                <div class="shelf-title">
-                                    <span>${escapeHTML(sectionLabel)}</span>
-                                    <span class="shelf-count">${filtered.length}</span>
+                                <div class="shelf-title-group">
+                                    <h2 class="shelf-title">Resultados de búsqueda</h2>
+                                    <span class="shelf-subtitle">${filtered.length} ${filtered.length === 1 ? 'coincidencia' : 'coincidencias'}</span>
                                 </div>
                             </div>
-                            <div class="search-results-grid">
+                            <div class="results-grid">
                                 ${filtered.map(ext => renderStandardCard(ext)).join('')}
                             </div>
                         </section>
@@ -1265,131 +2078,174 @@
                 return;
             }
 
-            // Vista Principal: Carrusel Especial de Destacadas + Carruseles por Categoría
-            const featuredList = appData.extensions.filter(ext => Boolean(ext.featured));
-            const categories = [...new Set(appData.extensions.map(ext => ext.category || 'General'))];
+            if (appData.activeTab !== 'Descubrir') {
+                const list = appData.activeTab === 'Todas'
+                    ? appData.extensions
+                    : appData.extensions.filter(e => e.category === appData.activeTab);
 
-            let html = '<div class="view-section">';
-
-            if (featuredList.length > 0) {
-                html += `
-                    <section class="shelf-section">
-                        <div class="shelf-header">
-                            <div class="shelf-title">
-                                <i data-lucide="sparkles" size="16" style="color: var(--accent-success);"></i>
-                                <span>Extensiones Destacadas</span>
-                                <span class="shelf-count">${featuredList.length}</span>
+                container.innerHTML = `
+                    <div class="view-section">
+                        <section class="shelf-section">
+                            <div class="shelf-header">
+                                <div class="shelf-title-group">
+                                    <h2 class="shelf-title">${escapeHTML(appData.activeTab)}</h2>
+                                    <span class="shelf-subtitle">${list.length} ${list.length === 1 ? 'extensión' : 'extensiones'}</span>
+                                </div>
                             </div>
-                            <div class="carousel-controls">
-                                <button class="carousel-nav-btn" data-scroll-target="carousel-featured" data-dir="-1" aria-label="Anterior">
-                                    <i data-lucide="chevron-left" size="16"></i>
-                                </button>
-                                <button class="carousel-nav-btn" data-scroll-target="carousel-featured" data-dir="1" aria-label="Siguiente">
-                                    <i data-lucide="chevron-right" size="16"></i>
-                                </button>
+                            <div class="results-grid">
+                                ${list.map(ext => renderStandardCard(ext)).join('')}
                             </div>
-                        </div>
-                        <div class="carousel-track" id="carousel-featured">
-                            ${featuredList.map(ext => renderFeaturedCard(ext)).join('')}
-                        </div>
-                    </section>
+                        </section>
+                    </div>
                 `;
+                return;
             }
 
-            categories.forEach((cat, catIdx) => {
-                const items = appData.extensions.filter(ext => (ext.category || 'General') === cat);
-                if (items.length === 0) return;
-                const trackId = `carousel-cat-${catIdx}`;
+            const categories = [...new Set(appData.extensions.map(e => e.category || 'General'))];
+            const featuredList = appData.extensions.filter(e => e.featured);
 
-                html += `
-                    <section class="shelf-section">
-                        <div class="shelf-header">
-                            <div class="shelf-title">
-                                <span>${escapeHTML(cat)}</span>
-                                <span class="shelf-count">${items.length}</span>
+            let html = `<div class="view-section">`;
+            html += `<div id="hero-banner-slot">${buildHeroHTML()}</div>`;
+
+            // Categorías Principales
+            html += `
+                <section class="shelf-section">
+                    <div class="shelf-header">
+                        <div class="shelf-title-group">
+                            <h2 class="shelf-title">Categorías principales</h2>
+                        </div>
+                        <div class="carousel-controls" data-controls-for="track-categories">
+                            <button class="carousel-nav-btn" data-scroll-target="track-categories" data-dir="-1" aria-label="Anterior">
+                                <i data-lucide="chevron-left" size="16"></i>
+                            </button>
+                            <button class="carousel-nav-btn" data-scroll-target="track-categories" data-dir="1" aria-label="Siguiente">
+                                <i data-lucide="chevron-right" size="16"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="carousel-track" id="track-categories">
+                        ${categories.map((cat, idx) => {
+                            const count = appData.extensions.filter(e => (e.category || 'General') === cat).length;
+                            const art = generateAbstractArt(cat, idx + 2);
+                            return `
+                                <div class="category-tile" data-select-tab="${escapeHTML(cat)}" style="background: ${art.background};">
+                                    <div class="category-tile-info">
+                                        <span class="category-tile-name">${escapeHTML(cat)}</span>
+                                        <span class="category-tile-count">${count} ${count === 1 ? 'app' : 'apps'}</span>
+                                    </div>
+                                    <div class="category-tile-icon">
+                                        <i data-lucide="${getCategoryIcon(cat)}" size="17"></i>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                        <div class="category-tile" data-select-tab="Todas" style="background: linear-gradient(135deg, #16161a 0%, #242429 100%);">
+                            <div class="category-tile-info">
+                                <span class="category-tile-name">Explorar todo</span>
+                                <span class="category-tile-count">${appData.extensions.length} en catálogo</span>
                             </div>
-                            <div class="carousel-controls">
-                                <button class="carousel-nav-btn" data-scroll-target="${trackId}" data-dir="-1" aria-label="Anterior">
-                                    <i data-lucide="chevron-left" size="16"></i>
-                                </button>
-                                <button class="carousel-nav-btn" data-scroll-target="${trackId}" data-dir="1" aria-label="Siguiente">
-                                    <i data-lucide="chevron-right" size="16"></i>
-                                </button>
+                            <div class="category-tile-icon">
+                                <i data-lucide="grid" size="17"></i>
                             </div>
                         </div>
-                        <div class="carousel-track" id="${trackId}">
-                            ${items.map(ext => renderStandardCard(ext)).join('')}
-                        </div>
-                    </section>
-                `;
-            });
+                    </div>
+                </section>
+            `;
 
-            html += '</div>';
+            // Recomendadas para ti
+            const recommendedList = featuredList.length > 0 ? featuredList : appData.extensions;
+            html += `
+                <section class="shelf-section">
+                    <div class="shelf-header">
+                        <div class="shelf-title-group">
+                            <h2 class="shelf-title">Recomendadas para ti</h2>
+                            <span class="shelf-subtitle">Selección verificada</span>
+                        </div>
+                        <div class="carousel-controls" data-controls-for="track-recommended">
+                            <button class="carousel-nav-btn" data-scroll-target="track-recommended" data-dir="-1" aria-label="Anterior">
+                                <i data-lucide="chevron-left" size="16"></i>
+                            </button>
+                            <button class="carousel-nav-btn" data-scroll-target="track-recommended" data-dir="1" aria-label="Siguiente">
+                                <i data-lucide="chevron-right" size="16"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="carousel-track" id="track-recommended">
+                        ${recommendedList.map(ext => renderStandardCard(ext)).join('')}
+                    </div>
+                </section>
+            `;
+
+            // Carruseles dinámicos por categoría si hay más de 1 extensión
+            if (categories.length > 1 || appData.extensions.length > 1) {
+                categories.forEach((cat, idx) => {
+                    const items = appData.extensions.filter(e => (e.category || 'General') === cat);
+                    const trackId = `track-cat-${idx}`;
+                    html += `
+                        <section class="shelf-section">
+                            <div class="shelf-header">
+                                <div class="shelf-title-group">
+                                    <h2 class="shelf-title">${escapeHTML(cat)}</h2>
+                                    <span class="shelf-subtitle">${items.length}</span>
+                                </div>
+                                <div class="carousel-controls" data-controls-for="${trackId}">
+                                    <button class="carousel-nav-btn" data-scroll-target="${trackId}" data-dir="-1" aria-label="Anterior">
+                                        <i data-lucide="chevron-left" size="16"></i>
+                                    </button>
+                                    <button class="carousel-nav-btn" data-scroll-target="${trackId}" data-dir="1" aria-label="Siguiente">
+                                        <i data-lucide="chevron-right" size="16"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="carousel-track" id="${trackId}">
+                                ${items.map(ext => renderStandardCard(ext)).join('')}
+                            </div>
+                        </section>
+                    `;
+                });
+            }
+
+            html += `</div>`;
             container.innerHTML = html;
+            requestAnimationFrame(updateCarouselControlsVisibility);
         }
 
-        function renderFeaturedCard(ext) {
-            const idx = appData.extensions.indexOf(ext);
-            const slug = getExtensionSlug(ext, idx);
-            const safeIcon = resolveSafeIcon(ext.icon);
-
-            return `
-                <article class="featured-card" data-slug="${escapeHTML(slug)}">
-                    <div>
-                        <div class="featured-top">
-                            <div class="featured-icon">
-                                <i data-lucide="${safeIcon}" size="22"></i>
-                            </div>
-                            <span class="featured-pill">
-                                <i data-lucide="sparkles" size="12"></i>
-                                <span>Destacada</span>
-                            </span>
-                        </div>
-                        <div class="featured-body" style="margin-top: 14px;">
-                            <h3>${escapeHTML(ext.name)}</h3>
-                            <p>${escapeHTML(ext.description || 'Sin descripción disponible.')}</p>
-                        </div>
-                    </div>
-                    <div class="featured-footer">
-                        <span>${escapeHTML(ext.category || 'General')} · v${escapeHTML(ext.version || '1.0')}</span>
-                        <span class="card-cta">
-                            <span>Abrir ficha</span>
-                            <i data-lucide="arrow-right" size="14"></i>
-                        </span>
-                    </div>
-                </article>
-            `;
-        }
-
-        function renderStandardCard(ext) {
-            const idx = appData.extensions.indexOf(ext);
-            const slug = getExtensionSlug(ext, idx);
-            const safeIcon = resolveSafeIcon(ext.icon);
-            const primaryTag = (ext.tags && ext.tags[0]) ? ext.tags[0] : (ext.author || 'Extensión');
-
-            return `
-                <article class="ext-card" data-slug="${escapeHTML(slug)}">
-                    <div>
-                        <div class="card-top">
-                            <div class="card-icon">
-                                <i data-lucide="${safeIcon}" size="19"></i>
-                            </div>
-                            <span class="card-version">v${escapeHTML(ext.version || '1.0')}</span>
-                        </div>
-                        <div class="card-body" style="margin-top: 12px;">
-                            <h3>${escapeHTML(ext.name)}</h3>
-                            <p>${escapeHTML(ext.description || 'Sin descripción disponible.')}</p>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <span class="mini-tag">${escapeHTML(primaryTag)}</span>
-                        <span class="card-cta">
-                            <span>Detalles</span>
-                            <i data-lucide="chevron-right" size="14"></i>
-                        </span>
-                    </div>
-                </article>
-            `;
+        /* =========================================================
+           PÁGINA DE DETALLE ESTILO CHROME WEB STORE
+           ========================================================= */
+        function buildDetailSlides(ext) {
+            const tags = ext.tags || [];
+            return [
+                {
+                    type: 'art-overview',
+                    label: 'Resumen',
+                    icon: 'sparkles',
+                    title: ext.name,
+                    subtitle: ext.description || 'Extensión modular diseñada para ofrecer una experiencia fluida y minimalista.',
+                    badge: ext.category || 'Extensión',
+                    seed: ext.id || ext.name,
+                    offset: 0
+                },
+                {
+                    type: 'live-preview',
+                    label: 'Interactivo',
+                    icon: 'play',
+                    seed: (ext.id || ext.name) + '-live',
+                    offset: 1
+                },
+                {
+                    type: 'art-specs',
+                    label: 'Características',
+                    icon: 'layers',
+                    title: 'Integración Ligera y Rápida',
+                    subtitle: tags.length > 0
+                        ? `Optimizada para: ${tags.map(t => '#' + t).join(' · ')}`
+                        : 'Sin dependencias pesadas. Ejecución aislada y segura en entorno oscuro.',
+                    badge: `Versión ${ext.version || '1.0.0'}`,
+                    seed: (ext.id || ext.name) + '-specs',
+                    offset: 2
+                }
+            ];
         }
 
         function renderDetailPage(container) {
@@ -1399,67 +2255,126 @@
                 container.innerHTML = `
                     <div class="view-section">
                         <div class="empty-state">
-                            <i data-lucide="alert-circle" size="28" style="color: var(--text-muted);"></i>
+                            <i data-lucide="alert-circle" size="30" style="color: var(--text-muted);"></i>
                             <h3>Extensión no encontrada</h3>
                             <p>El enlace solicitado no corresponde a ninguna extensión disponible.</p>
-                            <button class="btn-secondary" id="btn-empty-back" style="margin-top: 8px;">Volver al catálogo</button>
+                            <button class="btn-secondary" id="btn-back-home">Volver al catálogo</button>
                         </div>
                     </div>
                 `;
                 return;
             }
 
+            const slug = appData.selectedExtensionId;
+            const isInstalled = appData.installedIds.includes(slug);
             const safeIcon = resolveSafeIcon(ext.icon);
-            const tags = ext.tags || [];
+            const slides = buildDetailSlides(ext);
+            const currentSlide = slides[appData.detailSlideIndex % slides.length];
 
-            let previewBlockHTML = '';
-            if (!appData.previewVisible) {
-                previewBlockHTML = `
-                    <div class="preview-placeholder">
-                        <i data-lucide="eye" size="26" style="color: var(--text-muted);"></i>
-                        <p>La vista previa interactiva no se carga automáticamente para optimizar el rendimiento. Puedes iniciarla manualmente cuando lo desees.</p>
-                        <button class="btn-secondary" id="btn-load-preview">
-                            <i data-lucide="play" size="15"></i>
-                            <span>Cargar vista previa</span>
-                        </button>
-                    </div>
-                `;
-            } else if (appData.previewLoading) {
-                previewBlockHTML = `
-                    <div class="preview-placeholder">
-                        <i data-lucide="loader" size="24" style="color: var(--text-muted);"></i>
-                        <p>Obteniendo código de la extensión desde el repositorio...</p>
-                    </div>
-                `;
+            let stageHTML = '';
+            let toolbarHTML = '';
+
+            if (currentSlide.type === 'live-preview') {
+                if (appData.previewLoading) {
+                    stageHTML = `
+                        <div class="stage-art-slide" style="background: #0c0c0e;">
+                            <i data-lucide="loader" size="26" style="color: var(--text-muted);"></i>
+                            <p style="font-size: 13.5px; color: var(--text-muted);">Cargando vista previa interactiva...</p>
+                        </div>
+                    `;
+                } else if (appData.previewHtml) {
+                    toolbarHTML = `
+                        <div class="stage-toolbar">
+                            <button class="stage-tool-btn" id="btn-reload-preview" title="Recargar vista previa">
+                                <i data-lucide="rotate-cw" size="13"></i>
+                                <span>Recargar</span>
+                            </button>
+                            <button class="stage-tool-btn" id="btn-toggle-fullscreen" title="Pantalla completa">
+                                <i data-lucide="${appData.previewFullscreen ? 'minimize-2' : 'maximize-2'}" size="13"></i>
+                                <span>${appData.previewFullscreen ? 'Salir' : 'Expandir'}</span>
+                            </button>
+                        </div>
+                    `;
+                    stageHTML = `<iframe id="extension-preview-iframe" title="Vista previa de ${escapeHTML(ext.name)}" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>`;
+                } else {
+                    const art = generateAbstractArt(currentSlide.seed, currentSlide.offset);
+                    stageHTML = `
+                        <div class="stage-art-slide" style="background: ${art.background};">
+                            ${art.svg}
+                            <div class="stage-card-mockup">
+                                <i data-lucide="monitor" size="28" style="color: var(--text-main);"></i>
+                                <h4>Vista Previa Interactiva</h4>
+                                <p>Ejecuta una demostración funcional en vivo de <strong>${escapeHTML(ext.name)}</strong> dentro de un contenedor aislado.</p>
+                                <button class="btn-primary" id="btn-trigger-live-preview" style="margin-top: 4px;">
+                                    <i data-lucide="play" size="15"></i>
+                                    <span>Iniciar demostración</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
             } else {
-                previewBlockHTML = `
-                    <div class="preview-frame-wrap">
-                        <iframe id="extension-preview-iframe" title="Vista previa de ${escapeHTML(ext.name)}" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>
+                const art = generateAbstractArt(currentSlide.seed, currentSlide.offset);
+                stageHTML = `
+                    <div class="stage-art-slide" style="background: ${art.background};">
+                        ${art.svg}
+                        <div class="stage-card-mockup">
+                            <span class="badge badge-accent">${escapeHTML(currentSlide.badge)}</span>
+                            <div class="detail-icon-xl" style="width: 54px; height: 54px; border-radius: 16px;">
+                                <i data-lucide="${safeIcon}" size="24"></i>
+                            </div>
+                            <h4>${escapeHTML(currentSlide.title)}</h4>
+                            <p>${escapeHTML(currentSlide.subtitle)}</p>
+                        </div>
                     </div>
                 `;
             }
 
+            const relatedList = appData.extensions.filter((item, idx) => getExtensionSlug(item, idx) !== slug);
+
             container.innerHTML = `
                 <div class="view-section detail-page">
-                    <section class="detail-hero-bar">
+                    <div class="detail-topbar">
+                        <div class="detail-breadcrumb">
+                            <button id="btn-back-home">
+                                <i data-lucide="arrow-left" size="15"></i>
+                                <span>Volver</span>
+                            </button>
+                            <span>/</span>
+                            <span>${escapeHTML(ext.category || 'General')}</span>
+                        </div>
+
+                        <button class="btn-secondary" id="btn-share-ext" style="padding: 7px 14px; font-size: 12.5px;">
+                            <i data-lucide="share-2" size="14"></i>
+                            <span>Compartir ficha</span>
+                        </button>
+                    </div>
+
+                    <section class="detail-header-block">
                         <div class="detail-identity">
-                            <div class="detail-icon-lg">
-                                <i data-lucide="${safeIcon}" size="26" style="color: var(--text-main);"></i>
+                            <div class="detail-icon-xl">
+                                <i data-lucide="${safeIcon}" size="30" style="color: var(--text-main);"></i>
                             </div>
-                            <div class="detail-titles">
+                            <div class="detail-title-area">
                                 <h2>${escapeHTML(ext.name)}</h2>
-                                <div class="detail-subtitle">
-                                    <span>${escapeHTML(ext.category || 'General')}</span>
+                                <div class="detail-meta-inline">
+                                    <span>Por <strong>${escapeHTML(ext.author || 'Comunidad')}</strong></span>
                                     <span>·</span>
-                                    <span>Por ${escapeHTML(ext.author || 'Comunidad')}</span>
-                                    ${ext.featured ? '<span>·</span><span style="color: var(--accent-success);">Destacada</span>' : ''}
+                                    <span>${escapeHTML(ext.category || 'General')}</span>
+                                </div>
+                                <div class="detail-badges-row">
+                                    ${ext.featured ? '<span class="badge badge-featured"><i data-lucide="award" size="12"></i> Destacada</span>' : ''}
+                                    <span class="badge badge-neutral">v${escapeHTML(ext.version || '1.0.0')}</span>
+                                    <span class="badge badge-neutral">${escapeHTML(ext.status || 'Estable')}</span>
+                                    ${(ext.tags || []).map(t => `<span class="badge badge-neutral">#${escapeHTML(t)}</span>`).join('')}
                                 </div>
                             </div>
                         </div>
-                        <div class="detail-actions">
-                            <button class="btn-primary" id="btn-install-ext">
-                                <i data-lucide="download" size="16"></i>
-                                <span>Instalar</span>
+
+                        <div class="detail-cta-group">
+                            <button class="btn-primary ${isInstalled ? 'installed-state' : ''}" id="btn-install-ext">
+                                <i data-lucide="${isInstalled ? 'check' : 'download'}" size="16"></i>
+                                <span>${isInstalled ? 'Obtenida' : 'Obtener'}</span>
                             </button>
                             <button class="btn-secondary" id="btn-source-ext">
                                 <i data-lucide="code" size="16"></i>
@@ -1468,92 +2383,104 @@
                         </div>
                     </section>
 
-                    <section class="detail-section">
-                        <div class="detail-section-header">
-                            <h3 class="detail-section-title">
-                                <i data-lucide="file-text" size="16" style="color: var(--text-muted);"></i>
-                                <span>Descripción</span>
-                            </h3>
-                        </div>
-                        <p class="detail-description">${escapeHTML(ext.description || 'Esta extensión no incluye una descripción detallada.')}</p>
-                        ${tags.length > 0 ? `
-                            <div class="tags-row">
-                                ${tags.map(tag => `<span class="mini-tag">#${escapeHTML(tag)}</span>`).join('')}
-                            </div>
-                        ` : ''}
-                    </section>
-
-                    <section class="detail-section">
-                        <div class="detail-section-header">
-                            <h3 class="detail-section-title">
-                                <i data-lucide="monitor" size="16" style="color: var(--text-muted);"></i>
-                                <span>Vista previa interactiva</span>
-                            </h3>
-                            ${appData.previewVisible && !appData.previewLoading ? `
-                                <button class="btn-secondary" id="btn-hide-preview" style="padding: 6px 12px; font-size: 12px;">
-                                    <i data-lucide="eye-off" size="14"></i>
-                                    <span>Cerrar vista previa</span>
+                    <section class="media-showcase-box">
+                        <div class="media-stage ${appData.previewFullscreen ? 'fullscreen-stage' : ''}">
+                            ${toolbarHTML}
+                            ${!appData.previewFullscreen ? `
+                                <button class="stage-nav-arrow prev" id="detail-slide-prev" aria-label="Anterior">
+                                    <i data-lucide="chevron-left" size="18"></i>
+                                </button>
+                                <button class="stage-nav-arrow next" id="detail-slide-next" aria-label="Siguiente">
+                                    <i data-lucide="chevron-right" size="18"></i>
                                 </button>
                             ` : ''}
+                            ${stageHTML}
                         </div>
-                        ${previewBlockHTML}
+
+                        <div class="media-thumbnails">
+                            ${slides.map((s, idx) => {
+                                const thumbArt = generateAbstractArt(s.seed, s.offset);
+                                return `
+                                    <button class="thumb-btn ${idx === appData.detailSlideIndex ? 'active' : ''}"
+                                        data-detail-thumb="${idx}"
+                                        style="background: ${thumbArt.background};">
+                                        <span class="thumb-label">
+                                            <i data-lucide="${s.icon}" size="11"></i>
+                                            <span>${escapeHTML(s.label)}</span>
+                                        </span>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
                     </section>
 
-                    <section class="detail-section">
-                        <div class="detail-section-header">
-                            <h3 class="detail-section-title">
-                                <i data-lucide="info" size="16" style="color: var(--text-muted);"></i>
-                                <span>Ficha técnica</span>
-                            </h3>
-                        </div>
-                        <div class="meta-grid">
-                            <div class="meta-box">
+                    <section class="detail-section-block">
+                        <h3>Descripción general</h3>
+                        <p class="detail-desc-text">${escapeHTML(ext.description || 'Esta extensión no incluye una descripción detallada.')}</p>
+                    </section>
+
+                    <section class="detail-section-block">
+                        <h3>Detalles</h3>
+                        <div class="details-specs-grid">
+                            <div class="spec-item">
                                 <span>Versión</span>
                                 <strong>${escapeHTML(ext.version || '1.0.0')}</strong>
                             </div>
-                            <div class="meta-box">
-                                <span>Autor</span>
+                            <div class="spec-item">
+                                <span>Desarrollador</span>
                                 <strong>${escapeHTML(ext.author || 'Comunidad')}</strong>
                             </div>
-                            <div class="meta-box">
+                            <div class="spec-item">
                                 <span>Estado</span>
                                 <strong>${escapeHTML(ext.status || 'Estable')}</strong>
                             </div>
-                            <div class="meta-box">
+                            <div class="spec-item">
                                 <span>Archivo fuente</span>
                                 <strong>${escapeHTML(ext.file || 'N/A')}</strong>
                             </div>
                         </div>
                     </section>
+
+                    <section class="detail-section-block">
+                        <h3>${relatedList.length > 0 ? 'Relacionados' : 'Catálogo modular'}</h3>
+                        ${relatedList.length > 0 ? `
+                            <div class="carousel-track">
+                                ${relatedList.map(item => renderStandardCard(item)).join('')}
+                            </div>
+                        ` : `
+                            <div class="empty-state" style="padding: 28px 20px;">
+                                <i data-lucide="blocks" size="24" style="color: var(--text-muted);"></i>
+                                <p>Esta es actualmente la primera extensión disponible. Cuando añadas más módulos al repositorio, aparecerán aquí automáticamente.</p>
+                            </div>
+                        `}
+                    </section>
                 </div>
             `;
 
-            if (appData.previewVisible && !appData.previewLoading) {
+            if (currentSlide.type === 'live-preview' && appData.previewHtml && !appData.previewLoading) {
                 const iframe = document.getElementById('extension-preview-iframe');
-                if (iframe) {
-                    iframe.srcdoc = appData.previewHtml;
-                }
+                if (iframe) iframe.srcdoc = appData.previewHtml;
             }
         }
 
         function renderApp() {
-            const fabWrapper = document.getElementById('fab-wrapper');
-            fabWrapper.classList.toggle('hidden', appData.currentRoute === 'detail');
-
-            renderHeader();
-            renderCategoryPills();
-
+            renderTopNavigation();
             const mainContent = document.getElementById('main-content');
             if (appData.currentRoute === 'detail') {
+                stopHeroTimer();
                 renderDetailPage(mainContent);
             } else {
                 renderCatalogView(mainContent);
+                startHeroTimer();
             }
-
             lucide.createIcons();
         }
 
-        async function fetchCatalog() {
+        async function fetchCatalog(manualSync = false) {
+            const syncBtn = document.getElementById('btn-sync-catalog');
+            if (manualSync && syncBtn) {
+                syncBtn.querySelector('svg')?.style.setProperty('animation', 'spin 0.8s linear infinite');
+            }
             try {
                 const response = await fetch(BASE_URL + 'tools.json', { cache: 'no-store' });
                 if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -1564,10 +2491,12 @@
                 } else if (appData.extensions.length === 0) {
                     appData.extensions = FALLBACK_EXTENSIONS;
                 }
+                if (manualSync) showToast('Catálogo actualizado');
             } catch (e) {
                 if (appData.extensions.length === 0) {
                     appData.extensions = FALLBACK_EXTENSIONS;
                 }
+                if (manualSync) showToast('Usando caché local', 'wifi-off');
             } finally {
                 appData.isLoading = false;
                 saveData();
@@ -1576,106 +2505,262 @@
             }
         }
 
-        function setupEventListeners() {
-            // Navegación por píldoras de categorías
-            document.getElementById('category-pills').addEventListener('click', e => {
-                const pill = e.target.closest('.pill-btn');
-                if (!pill) return;
-                appData.selectedCategory = pill.dataset.cat;
-                saveData();
-                renderApp();
-            });
+        function openInstallModal(ext) {
+            const modal = document.getElementById('install-modal');
+            const rawUrl = BASE_URL + (ext.file || '');
+            document.getElementById('modal-ext-title').textContent = `Obtener ${ext.name}`;
+            document.getElementById('modal-ext-desc').textContent = `Copia la URL directa del módulo para integrarlo en tu Homescreen o ábrelo directamente en una pestaña nueva.`;
+            document.getElementById('modal-ext-url').textContent = rawUrl;
+            document.getElementById('modal-open-file').href = rawUrl;
+            modal.classList.add('open');
+        }
 
-            // Delegación de eventos en cabecera
-            document.getElementById('app-header').addEventListener('click', e => {
-                if (e.target.closest('#btn-back-catalog')) {
-                    navigateToCatalog(true);
+        function closeInstallModal() {
+            document.getElementById('install-modal').classList.remove('open');
+        }
+
+        function setupEventListeners() {
+            window.addEventListener('resize', updateCarouselControlsVisibility);
+
+            // Atajos de teclado: '/' o Ctrl+K para buscar, Esc para cerrar/limpiar
+            document.addEventListener('keydown', e => {
+                const searchInput = document.getElementById('search-input');
+                const isInputFocused = document.activeElement === searchInput;
+
+                if ((e.key === '/' && !isInputFocused) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
+                    e.preventDefault();
+                    searchInput.focus();
+                    return;
+                }
+
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('install-modal');
+                    if (modal.classList.contains('open')) {
+                        closeInstallModal();
+                        return;
+                    }
+                    if (appData.previewFullscreen) {
+                        appData.previewFullscreen = false;
+                        renderApp();
+                        return;
+                    }
+                    if (isInputFocused || appData.searchQuery) {
+                        appData.searchQuery = '';
+                        searchInput.value = '';
+                        document.getElementById('search-clear').classList.remove('visible');
+                        searchInput.blur();
+                        renderApp();
+                    }
                 }
             });
 
-            // Delegación de eventos en contenido principal
+            // Botón sincronizar catálogo
+            document.getElementById('btn-sync-catalog').addEventListener('click', () => {
+                fetchCatalog(true);
+            });
+
+            // Logo superior -> volver a Descubrir
+            document.getElementById('brand-home-btn').addEventListener('click', () => {
+                appData.searchQuery = '';
+                document.getElementById('search-input').value = '';
+                document.getElementById('search-clear').classList.remove('visible');
+                appData.activeTab = 'Descubrir';
+                navigateToCatalog(true);
+            });
+
+            // Pestañas de navegación superior
+            document.getElementById('nav-tabs').addEventListener('click', e => {
+                const tabBtn = e.target.closest('.nav-tab');
+                if (!tabBtn) return;
+                appData.activeTab = tabBtn.dataset.tab;
+                appData.searchQuery = '';
+                document.getElementById('search-input').value = '';
+                document.getElementById('search-clear').classList.remove('visible');
+                if (appData.currentRoute === 'detail') {
+                    navigateToCatalog(true);
+                } else {
+                    renderApp();
+                }
+            });
+
+            // Buscador superior
+            const searchInput = document.getElementById('search-input');
+            const searchClear = document.getElementById('search-clear');
+
+            searchInput.addEventListener('input', e => {
+                appData.searchQuery = e.target.value;
+                searchClear.classList.toggle('visible', appData.searchQuery.length > 0);
+                if (appData.currentRoute === 'detail') {
+                    navigateToCatalog(false);
+                } else {
+                    renderApp();
+                }
+            });
+
+            searchClear.addEventListener('click', () => {
+                appData.searchQuery = '';
+                searchInput.value = '';
+                searchClear.classList.remove('visible');
+                searchInput.focus();
+                renderApp();
+            });
+
+            // Eventos del Modal
+            document.getElementById('btn-close-modal').addEventListener('click', closeInstallModal);
+            document.getElementById('install-modal').addEventListener('click', e => {
+                if (e.target.id === 'install-modal') closeInstallModal();
+            });
+
+            document.getElementById('btn-copy-raw-url').addEventListener('click', () => {
+                const url = document.getElementById('modal-ext-url').textContent;
+                navigator.clipboard?.writeText(url);
+                showToast('Enlace directo copiado al portapapeles');
+            });
+
+            document.getElementById('btn-confirm-install').addEventListener('click', () => {
+                const slug = appData.selectedExtensionId;
+                if (slug && !appData.installedIds.includes(slug)) {
+                    appData.installedIds.push(slug);
+                    saveData();
+                }
+                closeInstallModal();
+                renderApp();
+                showToast('Extensión marcada como obtenida');
+            });
+
+            // Delegación global en contenido principal
             document.getElementById('main-content').addEventListener('click', e => {
-                // Controles horizontales de carrusel
-                const navBtn = e.target.closest('.carousel-nav-btn');
-                if (navBtn) {
-                    const track = document.getElementById(navBtn.dataset.scrollTarget);
-                    if (track) {
-                        const dir = Number(navBtn.dataset.dir);
-                        track.scrollBy({ left: dir * 320, behavior: 'smooth' });
+                // Controles del Hero Banner
+                if (e.target.closest('#hero-prev')) {
+                    const len = getHeroSlides().length;
+                    appData.heroSlideIndex = (appData.heroSlideIndex - 1 + len) % len;
+                    renderHeroOnly();
+                    return;
+                }
+                if (e.target.closest('#hero-next')) {
+                    const len = getHeroSlides().length;
+                    appData.heroSlideIndex = (appData.heroSlideIndex + 1) % len;
+                    renderHeroOnly();
+                    return;
+                }
+                if (e.target.closest('#hero-pause')) {
+                    appData.heroPaused = !appData.heroPaused;
+                    renderHeroOnly();
+                    if (appData.heroPaused) stopHeroTimer();
+                    else startHeroTimer();
+                    return;
+                }
+
+                const heroCta = e.target.closest('#hero-main-cta');
+                if (heroCta) {
+                    const action = heroCta.dataset.action;
+                    if (action === 'open-ext' && heroCta.dataset.slug) {
+                        navigateToExtension(heroCta.dataset.slug, true);
+                    } else if (action === 'open-ext-preview' && heroCta.dataset.slug) {
+                        navigateToExtension(heroCta.dataset.slug, true);
+                        appData.detailSlideIndex = 1;
+                        const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === heroCta.dataset.slug);
+                        if (ext) loadInteractivePreview(ext);
+                    } else {
+                        appData.activeTab = 'Todas';
+                        renderApp();
                     }
                     return;
                 }
 
-                // Apertura de página independiente de extensión
+                // Tarjeta de categoría principal
+                const catTile = e.target.closest('[data-select-tab]');
+                if (catTile) {
+                    appData.activeTab = catTile.dataset.selectTab;
+                    renderApp();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+
+                // Botones de carruseles horizontales
+                const navBtn = e.target.closest('.carousel-nav-btn');
+                if (navBtn) {
+                    const track = document.getElementById(navBtn.dataset.scrollTarget);
+                    if (track) {
+                        track.scrollBy({ left: Number(navBtn.dataset.dir) * 320, behavior: 'smooth' });
+                    }
+                    return;
+                }
+
+                // Clic en cualquier tarjeta de extensión o tile del Hero
                 const card = e.target.closest('[data-slug]');
-                if (card) {
+                if (card && card.dataset.slug) {
                     navigateToExtension(card.dataset.slug, true);
                     return;
                 }
 
-                // Acciones dentro de la página de extensión
-                if (e.target.closest('#btn-empty-back')) {
+                // Navegación dentro de la vista detalle
+                if (e.target.closest('#btn-back-home')) {
                     navigateToCatalog(true);
                     return;
                 }
 
-                if (e.target.closest('#btn-load-preview')) {
-                    loadManualPreview();
+                if (e.target.closest('#btn-share-ext')) {
+                    navigator.clipboard?.writeText(window.location.href);
+                    showToast('Enlace de la ficha copiado');
                     return;
                 }
 
-                if (e.target.closest('#btn-hide-preview')) {
-                    appData.previewVisible = false;
-                    appData.previewHtml = '';
+                if (e.target.closest('#detail-slide-prev')) {
+                    const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+                    if (!ext) return;
+                    const len = buildDetailSlides(ext).length;
+                    appData.detailSlideIndex = (appData.detailSlideIndex - 1 + len) % len;
+                    renderApp();
+                    return;
+                }
+
+                if (e.target.closest('#detail-slide-next')) {
+                    const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+                    if (!ext) return;
+                    const len = buildDetailSlides(ext).length;
+                    appData.detailSlideIndex = (appData.detailSlideIndex + 1) % len;
+                    renderApp();
+                    return;
+                }
+
+                const thumbBtn = e.target.closest('[data-detail-thumb]');
+                if (thumbBtn) {
+                    appData.detailSlideIndex = Number(thumbBtn.dataset.detailThumb);
+                    renderApp();
+                    return;
+                }
+
+                if (e.target.closest('#btn-trigger-live-preview')) {
+                    const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+                    if (ext) loadInteractivePreview(ext);
+                    return;
+                }
+
+                if (e.target.closest('#btn-reload-preview')) {
+                    const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+                    if (ext) loadInteractivePreview(ext, true);
+                    return;
+                }
+
+                if (e.target.closest('#btn-toggle-fullscreen')) {
+                    appData.previewFullscreen = !appData.previewFullscreen;
                     renderApp();
                     return;
                 }
 
                 if (e.target.closest('#btn-install-ext')) {
-                    window.open(REPO_URL, '_blank', 'noopener');
+                    const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
+                    if (ext) openInstallModal(ext);
                     return;
                 }
 
-                const sourceBtn = e.target.closest('#btn-source-ext');
-                if (sourceBtn) {
+                if (e.target.closest('#btn-source-ext')) {
                     const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
-                    if (!ext || !ext.file) {
-                        triggerShake(sourceBtn);
-                        return;
+                    if (ext && ext.file) {
+                        window.open(BASE_URL + ext.file, '_blank', 'noopener');
                     }
-                    window.open(BASE_URL + ext.file, '_blank', 'noopener');
                 }
-            });
-
-            // Buscador Flotante (FAB Search)
-            const fabSearch = document.getElementById('fab-search');
-            const fabTrigger = document.getElementById('fab-trigger');
-            const searchInput = document.getElementById('search-input');
-            const fabClear = document.getElementById('fab-clear');
-
-            fabTrigger.addEventListener('click', () => {
-                fabSearch.classList.add('expanded');
-                searchInput.focus();
-            });
-
-            searchInput.addEventListener('input', e => {
-                appData.searchQuery = e.target.value;
-                fabClear.classList.toggle('visible', appData.searchQuery.length > 0);
-                renderApp();
-            });
-
-            searchInput.addEventListener('blur', () => {
-                if (!appData.searchQuery.trim()) {
-                    fabSearch.classList.remove('expanded');
-                }
-            });
-
-            fabClear.addEventListener('click', () => {
-                appData.searchQuery = '';
-                searchInput.value = '';
-                fabClear.classList.remove('visible');
-                searchInput.focus();
-                renderApp();
             });
         }
 
@@ -1684,14 +2769,15 @@
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    if (parsed.selectedCategory) appData.selectedCategory = parsed.selectedCategory;
                     if (Array.isArray(parsed.extensionsCache) && parsed.extensionsCache.length > 0) {
                         appData.extensions = parsed.extensionsCache;
                         appData.isLoading = false;
                     }
+                    if (Array.isArray(parsed.installedIds)) {
+                        appData.installedIds = parsed.installedIds;
+                    }
                 } else {
                     appData.extensions = FALLBACK_EXTENSIONS;
-                    saveData();
                 }
             } catch (e) {
                 appData.extensions = FALLBACK_EXTENSIONS;
