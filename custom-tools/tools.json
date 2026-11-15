@@ -16,44 +16,64 @@
       "icon": "flask-conical",
       "file": "example.html",
       "version": "1.0.0",
-      "author": "Guilleplayer",
+      "author": "Homescreen NEO",
       "status": "demo",
       "featured": true,
       "order": 999
     },
     {
-      "id": "example2",
-      "name": "Herramienta de ejemplo 2",
-      "description": "Demostración técnica del sistema de herramientas personalizadas de Homescreen NEO.",
-      "category": "Desarrollo",
+      "id": "ambient",
+      "name": "Sonido ambiental",
+      "description": "Sonidos ambientales para concentración, relajación o descanso en Homescreen NEO. Ruido blanco, lluvia y enfoque.",
+      "category": "Productividad",
       "tags": [
-        "demo",
-        "desarrollo",
-        "experimental"
+        "audio",
+        "sonido",
+        "relajación",
+        "concentración",
+        "ambiente"
       ],
-      "icon": "flask-conical",
-      "file": "example.html",
+      "icon": "volume-2",
+      "file": "ambient.html",
       "version": "1.0.0",
-      "author": "Guilleplayer",
-      "status": "demo",
+      "author": "Homescreen NEO",
+      "status": "active",
       "featured": true,
       "order": 999
     },
     {
-      "id": "example3",
-      "name": "Herramienta de ejemplo 3",
-      "description": "Demostración técnica del sistema de herramientas personalizadas de Homescreen NEO.",
-      "category": "Desarrollo",
+      "id": "snake",
+      "name": "Snake",
+      "description": "Juego clásico de Snake para Homescreen NEO.",
+      "category": "Juegos",
       "tags": [
-        "demo",
-        "desarrollo",
-        "experimental"
+        "juego",
+        "snake",
+        "clásico"
       ],
-      "icon": "flask-conical",
-      "file": "example.html",
+      "icon": "gamepad-2",
+      "file": "snake.html",
       "version": "1.0.0",
-      "author": "Guilleplayer",
-      "status": "demo",
+      "author": "Homescreen NEO",
+      "status": "active",
+      "featured": true,
+      "order": 999
+    },
+    {
+      "id": "simon",
+      "name": "Simon",
+      "description": "Juego clásico de Simon para Homescreen NEO.",
+      "category": "Juegos",
+      "tags": [
+        "juego",
+        "simon",
+        "clásico"
+      ],
+      "icon": "gamepad-2",
+      "file": "simon.html",
+      "version": "1.0.0",
+      "author": "Homescreen NEO",
+      "status": "active",
       "featured": true,
       "order": 999
     }

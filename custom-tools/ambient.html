@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="homescreen-tool" content='{
+      "version": 1,
+      "title": "Sonido Ambiental",
+      "icon": "volume-2",
+      "width": 340,
+      "height": 390,
+      "minWidth": 340,
+      "minHeight": 260,
+      "supportsPip": false
+    }'>
+    <title>Paisaje Sonoro</title>
+    <style>    
+        :root {
+            /* Paleta Cromática Orgánica y Oscura */
+            --bg: #000000;
+            --surface: #121212;
+            --surface-hover: #1c1c1e;
+            
+            /* Configuración Neo-Glass Pure */
+            --glass: rgba(15, 15, 15, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --blur-val: 30px;
+
+            /* Jerarquía Textual */
+            --text-main: #FFFFFF;
+            --text-muted: #8E8E93;
+
+            /* Estados y Acentos de Sistema */
+            --accent-danger: #FF453A;
+            --accent-success: #34C759;
+
+            /* Físicas de Animación Progresivas */
+            --bezier: cubic-bezier(0.16, 1, 0.3, 1);
+            --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .app-container {
+            height: 100dvh;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top) + 16px) 24px calc(env(safe-area-inset-bottom) + 16px) 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Contenedor Principal */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: var(--glass);
+            backdrop-filter: blur(var(--blur-val));
+            -webkit-backdrop-filter: blur(var(--blur-val));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 18px;
+            gap: 14px;
+            min-height: 0;
+        }
+
+        /* Selector de Ambientes */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .preset-btn {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 14px 8px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s var(--bezier);
+        }
+
+        .preset-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-main);
+        }
+
+        .preset-btn:active {
+            transform: scale(0.96);
+        }
+
+        .preset-btn.selected {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.28);
+            color: var(--text-main);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Visualizador de Ondas */
+        .visualizer {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 44px;
+            width: 100%;
+        }
+
+        .bar {
+            width: 4px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 100px;
+            transition: height 0.3s var(--bezier), background-color 0.3s var(--bezier);
+        }
+
+        .bar.active {
+            background: var(--text-main);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+            animation: wavePulse 1.2s infinite ease-in-out alternate;
+        }
+
+        .bar:nth-child(1) { animation-delay: 0.0s; }
+        .bar:nth-child(2) { animation-delay: 0.2s; }
+        .bar:nth-child(3) { animation-delay: 0.4s; }
+        .bar:nth-child(4) { animation-delay: 0.1s; }
+        .bar:nth-child(5) { animation-delay: 0.5s; }
+        .bar:nth-child(6) { animation-delay: 0.3s; }
+        .bar:nth-child(7) { animation-delay: 0.15s; }
+        .bar:nth-child(8) { animation-delay: 0.35s; }
+        .bar:nth-child(9) { animation-delay: 0.05s; }
+
+        @keyframes wavePulse {
+            0% { height: 8px; opacity: 0.45; }
+            100% { height: 38px; opacity: 1; }
+        }
+
+        /* Controles Inferiores */
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            padding: 12px 14px;
+            border-radius: 12px;
+        }
+
+        .volume-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 100px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s var(--spring);
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border: none;
+            border-radius: 50%;
+            background: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s var(--spring);
+        }
+
+        .vol-value {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            min-width: 36px;
+            text-align: right;
+            transition: transform 0.2s var(--spring), color 0.2s var(--bezier);
+        }
+
+        .vol-value.pulse {
+            transform: scale(1.08);
+            color: var(--text-main);
+        }
+
+        /* Botón Principal */
+        .play-btn {
+            background: var(--text-main);
+            color: var(--bg);
+            border: 1px solid transparent;
+            width: 100%;
+            padding: 13px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s var(--bezier);
+        }
+
+        .play-btn:hover {
+            opacity: 0.92;
+        }
+
+        .play-btn:active {
+            transform: scale(0.98);
+        }
+
+        .play-btn.playing {
+            background: rgba(255, 69, 58, 0.14);
+            border-color: rgba(255, 69, 58, 0.35);
+            color: var(--accent-danger);
+        }
+
+        .play-btn.playing:hover {
+            background: rgba(255, 69, 58, 0.22);
+        }
+
+        /* Adaptabilidad para ventanas compactas */
+        @media (max-height: 330px) {
+            .app-container {
+                padding: 12px 16px;
+                gap: 10px;
+            }
+            .main-content {
+                padding: 12px;
+                gap: 10px;
+            }
+            .preset-btn {
+                padding: 10px 6px;
+            }
+            .visualizer {
+                min-height: 28px;
+            }
+            @keyframes wavePulse {
+                0% { height: 6px; opacity: 0.45; }
+                100% { height: 24px; opacity: 1; }
+            }
+            .play-btn {
+                padding: 10px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="main-view">
+        <main class="main-content">
+            <div class="presets-grid" id="presetsGrid">
+                <button class="preset-btn" data-preset="rain">Lluvia</button>
+                <button class="preset-btn" data-preset="white">Blanco</button>
+                <button class="preset-btn" data-preset="deep">Enfoque</button>
+            </div>
+
+            <div class="visualizer" id="visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+
+            <div class="controls-section">
+                <div class="volume-control">
+                    <span class="volume-label"></span>
+                    <input type="range" min="0" max="1" step="0.01" value="0.5" class="volume-slider" id="volumeSlider" aria-label="Volumen">
+                    <span class="vol-value" id="volVal">50%</span>
+                </div>
+
+                <button class="play-btn" id="playBtn">
+                    <span id="playText">Reproducir</span>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'ambient_neo_state_v1';
+
+        const presetsConfig = {
+            rain: { filterType: 'lowpass', freq: 1200, q: 2, label: 'Lluvia' },
+            white: { filterType: 'lowpass', freq: 12000, q: 0.5, label: 'Blanco' },
+            deep: { filterType: 'lowpass', freq: 400, q: 1, label: 'Enfoque' }
+        };
+
+        let appData = {
+            currentPreset: 'rain',
+            volume: 0.5,
+            isPlaying: false
+        };
+
+        let audioCtx = null;
+        let sourceNode = null;
+        let filterNode = null;
+        let gainNode = null;
+        let pulseTimeout = null;
+
+        const playBtn = document.getElementById('playBtn');
+        const playText = document.getElementById('playText');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volVal = document.getElementById('volVal');
+        const presetBtns = document.querySelectorAll('.preset-btn');
+        const visualizerBars = document.querySelectorAll('.bar');
+
+        function saveData() {
+            const persistentState = {
+                currentPreset: appData.currentPreset,
+                volume: appData.volume
+            };
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(persistentState));
+            } catch (e) {}
+        }
+
+        function loadData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.currentPreset && presetsConfig[parsed.currentPreset]) {
+                        appData.currentPreset = parsed.currentPreset;
+                    }
+                    if (typeof parsed.volume === 'number' && parsed.volume >= 0 && parsed.volume <= 1) {
+                        appData.volume = parsed.volume;
+                    }
+                } else {
+                    saveData();
+                }
+            } catch (e) {}
+        }
+
+        function renderApp() {
+            presetBtns.forEach(btn => {
+                const preset = btn.getAttribute('data-preset');
+                btn.classList.toggle('selected', preset === appData.currentPreset);
+            });
+
+            volumeSlider.value = appData.volume;
+            const percent = Math.round(appData.volume * 100);
+            volVal.textContent = percent + '%';
+
+            if (appData.isPlaying) {
+                playBtn.classList.add('playing');
+                playText.textContent = 'Detener';
+                visualizerBars.forEach(bar => bar.classList.add('active'));
+            } else {
+                playBtn.classList.remove('playing');
+                playText.textContent = 'Reproducir';
+                visualizerBars.forEach(bar => bar.classList.remove('active'));
+            }
+        }
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function createNoiseBuffer() {
+            const bufferSize = audioCtx.sampleRate * 2;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            return buffer;
+        }
+
+        function startSound() {
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const buffer = createNoiseBuffer();
+            sourceNode = audioCtx.createBufferSource();
+            sourceNode.buffer = buffer;
+            sourceNode.loop = true;
+
+            filterNode = audioCtx.createBiquadFilter();
+            const config = presetsConfig[appData.currentPreset];
+            filterNode.type = config.filterType;
+            filterNode.frequency.setValueAtTime(config.freq, audioCtx.currentTime);
+            filterNode.Q.setValueAtTime(config.q, audioCtx.currentTime);
+
+            gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(appData.volume, audioCtx.currentTime);
+
+            sourceNode.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            sourceNode.start();
+            appData.isPlaying = true;
+            saveData();
+            renderApp();
+        }
+
+        function stopSound() {
+            if (sourceNode) {
+                sourceNode.stop();
+                sourceNode.disconnect();
+                sourceNode = null;
+            }
+            appData.isPlaying = false;
+            saveData();
+            renderApp();
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (appData.isPlaying) {
+                stopSound();
+            } else {
+                startSound();
+            }
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            appData.volume = parseFloat(e.target.value);
+            if (gainNode && audioCtx) {
+                gainNode.gain.setValueAtTime(appData.volume, audioCtx.currentTime);
+            }
+
+            volVal.classList.add('pulse');
+            clearTimeout(pulseTimeout);
+            pulseTimeout = setTimeout(() => {
+                volVal.classList.remove('pulse');
+            }, 180);
+
+            saveData();
+            renderApp();
+        });
+
+        presetBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedPreset = btn.getAttribute('data-preset');
+                if (!presetsConfig[selectedPreset]) return;
+
+                appData.currentPreset = selectedPreset;
+
+                if (filterNode && audioCtx) {
+                    const config = presetsConfig[appData.currentPreset];
+                    filterNode.type = config.filterType;
+                    filterNode.frequency.setTargetAtTime(config.freq, audioCtx.currentTime, 0.1);
+                    filterNode.Q.setTargetAtTime(config.q, audioCtx.currentTime, 0.1);
+                }
+
+                saveData();
+                renderApp();
+            });
+        });
+
+        window.onload = () => {
+            loadData();
+            renderApp();
+        };
+    </script>
+</body>
+</html>
