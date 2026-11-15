@@ -21,7 +21,6 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-border-strong: rgba(255, 255, 255, 0.16);
             --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-            --blur-val: 30px;
 
             /* Jerarquía Textual */
             --text-main: #FFFFFF;
@@ -426,7 +425,6 @@
             padding: 5px 13px;
             border-radius: 100px;
             background: rgba(0, 0, 0, 0.48);
-            backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.14);
             font-size: 12px;
             font-weight: 500;
@@ -464,7 +462,6 @@
             height: 58px;
             border-radius: 18px;
             background: rgba(16, 16, 19, 0.88);
-            backdrop-filter: blur(18px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.22);
             display: grid;
@@ -484,7 +481,6 @@
             padding: 10px 22px;
             border-radius: 100px;
             background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.24);
             color: var(--text-main);
             font-size: 13.5px;
@@ -517,7 +513,6 @@
             padding: 5px 10px;
             border-radius: 100px;
             background: rgba(0, 0, 0, 0.56);
-            backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.14);
             font-size: 12px;
             font-variant-numeric: tabular-nums;
@@ -755,7 +750,6 @@
             height: 46px;
             border-radius: 15px;
             background: rgba(14, 14, 17, 0.88);
-            backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             display: grid;
@@ -786,7 +780,6 @@
             font-size: 11px;
             font-weight: 500;
             letter-spacing: 0.01em;
-            backdrop-filter: blur(10px);
         }
 
         .badge-featured {
@@ -1090,7 +1083,6 @@
             padding: 0 12px;
             border-radius: 100px;
             background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.16);
             color: #fff;
             font-size: 12px;
@@ -1137,7 +1129,6 @@
             padding: 26px;
             border-radius: 22px;
             background: rgba(12, 12, 15, 0.8);
-            backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.18);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), var(--glass-highlight);
             display: flex;
@@ -1173,7 +1164,6 @@
             height: 38px;
             border-radius: 50%;
             background: rgba(0, 0, 0, 0.62);
-            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.18);
             color: #fff;
             display: grid;
@@ -1230,7 +1220,6 @@
             font-weight: 600;
             color: #fff;
             background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
             padding: 3px 7px;
             border-radius: 7px;
             display: flex;
@@ -1307,7 +1296,6 @@
             inset: 0;
             z-index: 150;
             background: rgba(0, 0, 0, 0.72);
-            backdrop-filter: blur(12px);
             display: none;
             place-items: center;
             padding: 20px;
@@ -1399,7 +1387,6 @@
             padding: 10px 18px;
             border-radius: 100px;
             background: rgba(24, 24, 28, 0.9);
-            backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border-strong);
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
             font-size: 13px;
@@ -1514,7 +1501,7 @@
     <div class="modal-backdrop" id="install-modal" role="dialog" aria-modal="true" aria-labelledby="modal-ext-title">
         <div class="modal-card">
             <div class="modal-header">
-                <h3 id="modal-ext-title">Obtener extensión</h3>
+                <h3 id="modal-ext-title">Obtener extensión en Homescreen</h3>
                 <button class="modal-close" id="btn-close-modal" aria-label="Cerrar">
                     <i data-lucide="x" size="16"></i>
                 </button>

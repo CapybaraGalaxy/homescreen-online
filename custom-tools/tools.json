@@ -22,7 +22,7 @@
       "order": 999
     },
     {
-      "id": "example",
+      "id": "example2",
       "name": "Herramienta de ejemplo 2",
       "description": "Demostración técnica del sistema de herramientas personalizadas de Homescreen NEO.",
       "category": "Desarrollo",
@@ -40,7 +40,7 @@
       "order": 999
     },
     {
-      "id": "example",
+      "id": "example3",
       "name": "Herramienta de ejemplo 3",
       "description": "Demostración técnica del sistema de herramientas personalizadas de Homescreen NEO.",
       "category": "Desarrollo",
