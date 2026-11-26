@@ -100,6 +100,39 @@
         @media(max-width:800px){.app-detail-overview{grid-template-columns:1fr}.app-detail-gallery,.app-gallery-track,.app-detail-stage-fallback{min-height:260px}.app-gallery-slide img{min-height:260px}}
         @media(max-width:480px){.app-info-card{padding:16px}.app-info-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.app-detail-gallery,.app-gallery-track,.app-detail-stage-fallback{min-height:220px}.app-gallery-slide img{min-height:220px}}
 
+
+        /* Panel lateral compartido: aplicaciones y herramientas */
+        .publication-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(290px,.85fr);gap:22px;align-items:stretch;margin:24px 0 34px}
+        .publication-layout>.media-showcase-box{min-width:0;margin:0;align-self:stretch}
+        .publication-panel{--panel-accent:var(--app-accent,var(--accent-blue));min-width:0;padding:27px 25px;background:#0d0d0f;border:1px solid rgba(255,255,255,.075);border-radius:18px;display:flex;flex-direction:column;gap:0}
+        .publication-panel-head{padding-bottom:22px}
+        .publication-title-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:9px}
+        .publication-title{font-size:25px;line-height:1.16;letter-spacing:-.04em;font-weight:600;color:#fff}
+        .publication-version{font-size:11px;color:#777982;font-weight:400;white-space:nowrap}
+        .publication-description{margin-top:11px;color:#a1a1aa;font-size:13px;line-height:1.7;font-weight:300}
+        .publication-actions{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 25px}
+        .publication-actions button{min-height:42px}
+        .publication-actions .btn-primary{box-shadow:none}
+        .publication-section{padding:20px 0;border-top:1px solid rgba(255,255,255,.075)}
+        .publication-section-title{margin:0 0 15px;color:#f1f1f3;font-size:13px;font-weight:500;letter-spacing:.01em}
+        .publication-details{display:grid;grid-template-columns:1fr 1fr;gap:15px 20px}
+        .publication-detail{min-width:0;display:flex;flex-direction:column;gap:5px}
+        .publication-detail-label{font-size:10.5px;color:#777982;font-weight:400}
+        .publication-detail-value{font-size:12.5px;color:#e5e5e7;font-weight:400;overflow-wrap:anywhere}
+        .publication-detail-value a{color:#d4d4d8;text-decoration:none;text-underline-offset:3px}
+        .publication-detail-value a:hover{color:#fff;text-decoration:underline}
+        .publication-capabilities{display:flex;flex-wrap:wrap;gap:13px 16px}
+        .publication-capability{display:inline-flex;align-items:center;gap:7px;color:#b6b6bd;font-size:11.5px;font-weight:300}
+        .publication-capability svg{width:14px;height:14px;color:#8f9cff;stroke-width:1.7}
+        .publication-links{display:flex;align-items:center;flex-wrap:wrap;gap:18px;margin-top:auto;padding-top:19px;border-top:1px solid rgba(255,255,255,.075)}
+        .publication-links a{display:inline-flex;align-items:center;gap:7px;color:#9999a2;text-decoration:none;font-size:11.5px;transition:color .18s ease}
+        .publication-links a:hover{color:#fff}
+        .publication-links svg{width:14px;height:14px}
+        .publication-status{display:inline-flex;align-items:center;gap:6px;color:#b7b7c0;font-size:11px}
+        .publication-status-dot{width:6px;height:6px;border-radius:50%;background:#67d391}
+        @media(max-width:820px){.publication-layout{grid-template-columns:1fr}.publication-panel{padding:23px}.publication-layout>.media-showcase-box{order:0}.publication-panel{order:1}}
+        @media(max-width:480px){.publication-panel{padding:20px 17px}.publication-title{font-size:22px}.publication-details{gap:14px 12px}.publication-actions{flex-direction:column}.publication-actions button{width:100%}}
+
     </style>
 
 </head>
@@ -114,7 +147,7 @@
                         <i data-lucide="puzzle" size="19" style="color: var(--text-main);"></i>
                     </div>
                     <div class="brand-title-wrap">
-                        <h1>Extensiones Test 1</h1>
+                        <h1>Extensiones</h1>
                         <span class="header-counter" id="tools-counter"></span>
                     </div>
                 </div>
@@ -1100,6 +1133,48 @@ function generateAbstractArt(seedText, variantOffset = 0) {
             ];
         }
 
+
+        function renderPublicationPanel(item, actionsHTML = '') {
+            const author = item.author || 'Comunidad';
+            const category = item.category || 'General';
+            const authorLink = item.authorUrl && /^https?:\/\//i.test(item.authorUrl)
+                ? `<a href="${escapeHTML(item.authorUrl)}" target="_blank" rel="noopener noreferrer">${escapeHTML(author)}</a>`
+                : escapeHTML(author);
+            const status = item.status ? String(item.status) : '';
+            const capabilities = [
+                item.offlineReady === true ? ['wifi-off', 'Funciona sin conexión'] : null,
+                item.featured === true ? ['star', 'Destacada'] : null,
+                item.isNew === true ? ['sparkles', 'Nueva'] : null,
+                item.requiresExternalAccess === true ? ['globe', 'Requiere acceso externo'] : null,
+                item.badge ? ['badge-check', String(item.badge)] : null
+            ].filter(Boolean);
+            const links = [
+                item.authorUrl && /^https?:\/\//i.test(item.authorUrl) ? `<a href="${escapeHTML(item.authorUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="user-round"></i> Sitio web</a>` : '',
+                item.repoUrl && /^https?:\/\//i.test(item.repoUrl) ? `<a href="${escapeHTML(item.repoUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="github"></i> GitHub</a>` : ''
+            ].filter(Boolean);
+            return `
+                <aside class="publication-panel">
+                    <div class="publication-panel-head">
+                        <div class="publication-title-line">
+                            <h2 class="publication-title">${escapeHTML(item.name || 'Publicación')}</h2>
+                            ${item.version ? `<span class="publication-version">v${escapeHTML(item.version)}</span>` : ''}
+                        </div>
+                        <p class="publication-description">${escapeHTML(item.description || 'Sin descripción disponible.')}</p>
+                    </div>
+                    ${actionsHTML ? `<div class="publication-actions">${actionsHTML}</div>` : ''}
+                    <section class="publication-section">
+                        <h3 class="publication-section-title">Detalles</h3>
+                        <div class="publication-details">
+                            <div class="publication-detail"><span class="publication-detail-label">Autor</span><span class="publication-detail-value">${authorLink}</span></div>
+                            <div class="publication-detail"><span class="publication-detail-label">Categoría</span><span class="publication-detail-value">${escapeHTML(category)}</span></div>
+                            ${status ? `<div class="publication-detail"><span class="publication-detail-label">Estado</span><span class="publication-detail-value"><span class="publication-status"><span class="publication-status-dot"></span>${escapeHTML(status)}</span></span></div>` : ''}
+                        </div>
+                    </section>
+                    ${capabilities.length ? `<section class="publication-section"><h3 class="publication-section-title">Características</h3><div class="publication-capabilities">${capabilities.map(([icon,label]) => `<span class="publication-capability"><i data-lucide="${icon}"></i>${escapeHTML(label)}</span>`).join('')}</div></section>` : ''}
+                    ${links.length ? `<footer class="publication-links">${links.join('')}</footer>` : ''}
+                </aside>`;
+        }
+
         function renderDetailPage(container) {
             const ext = appData.extensions.find((item, idx) => getExtensionSlug(item, idx) === appData.selectedExtensionId);
 
@@ -1202,39 +1277,7 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                         </button>
                     </div>
 
-                    <section class="detail-header-block">
-                        <div class="detail-identity">
-                            <div class="detail-icon-xl">
-                                <i data-lucide="${safeIcon}" size="30" style="color: var(--text-main);"></i>
-                            </div>
-                            <div class="detail-title-area">
-                                <h2>${escapeHTML(ext.name)}</h2>
-                                <div class="detail-meta-inline">
-                                    <span>Por <strong>${escapeHTML(ext.author || 'Comunidad')}</strong></span>
-                                    <span>·</span>
-                                    <span>${escapeHTML(ext.category || 'General')}</span>
-                                </div>
-                                <div class="detail-badges-row">
-                                    ${ext.featured ? '<span class="badge badge-featured"><i data-lucide="award" size="12"></i> Destacada</span>' : ''}
-                                    <span class="badge badge-neutral">v${escapeHTML(ext.version || '1.0.0')}</span>
-                                    <span class="badge badge-neutral">${escapeHTML(ext.status || 'Estable')}</span>
-                                    ${(ext.tags || []).map(t => `<span class="badge badge-neutral">#${escapeHTML(t)}</span>`).join('')}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="detail-cta-group">
-                            <button class="btn-primary ${getToolInstallState(ext) === 'disabled' ? 'install-disabled' : ''}" id="btn-install-ext" ${getToolInstallState(ext) === 'disabled' ? 'disabled aria-disabled="true"' : ''}>
-                                <i data-lucide="${getToolInstallState(ext) === 'disabled' ? 'ban' : 'download'}" size="16"></i>
-                                <span>${getToolInstallState(ext) === 'disabled' ? 'No disponible' : 'Instalar'}</span>
-                            </button>
-                            <button class="btn-secondary" id="btn-source-ext">
-                                <i data-lucide="code" size="16"></i>
-                                <span>Código</span>
-                            </button>
-                        </div>
-                    </section>
-
+                    <section class="publication-layout">
                     <section class="media-showcase-box">
                         <div class="media-stage ${appData.previewFullscreen ? 'fullscreen-stage' : ''}">
                             ${toolbarHTML}
@@ -1266,31 +1309,16 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                         </div>
                     </section>
 
-                    <section class="detail-section-block">
-                        <h3>Descripción general</h3>
-                        <p class="detail-desc-text">${escapeHTML(ext.description || 'Esta extensión no incluye una descripción detallada.')}</p>
-                    </section>
-
-                    <section class="detail-section-block">
-                        <h3>Detalles</h3>
-                        <div class="details-specs-grid">
-                            <div class="spec-item">
-                                <span>Versión</span>
-                                <strong>${escapeHTML(ext.version || '1.0.0')}</strong>
-                            </div>
-                            <div class="spec-item">
-                                <span>Desarrollador</span>
-                                <strong>${escapeHTML(ext.author || 'Comunidad')}</strong>
-                            </div>
-                            <div class="spec-item">
-                                <span>Estado</span>
-                                <strong>${escapeHTML(ext.status || 'Estable')}</strong>
-                            </div>
-                            <div class="spec-item">
-                                <span>Archivo fuente</span>
-                                <strong>${escapeHTML(ext.file || 'N/A')}</strong>
-                            </div>
-                        </div>
+                    ${renderPublicationPanel(ext, `
+                            <button class="btn-primary ${getToolInstallState(ext) === 'disabled' ? 'install-disabled' : ''}" id="btn-install-ext" ${getToolInstallState(ext) === 'disabled' ? 'disabled aria-disabled="true"' : ''}>
+                                <i data-lucide="${getToolInstallState(ext) === 'disabled' ? 'ban' : 'download'}" size="16"></i>
+                                <span>${getToolInstallState(ext) === 'disabled' ? 'No disponible' : 'Instalar'}</span>
+                            </button>
+                            <button class="btn-secondary" id="btn-source-ext">
+                                <i data-lucide="code" size="16"></i>
+                                <span>Código</span>
+                            </button>
+`)}
                     </section>
 
                     <section class="detail-section-block">
@@ -1334,32 +1362,11 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                         <div class="detail-breadcrumb"><button id="btn-back-home"><i data-lucide="arrow-left" size="15"></i><span>Volver</span></button><span>/</span><span>Aplicaciones</span></div>
                         <button class="btn-secondary" id="btn-share-app" style="padding:7px 14px;font-size:12.5px"><i data-lucide="share-2" size="14"></i><span>Compartir ficha</span></button>
                     </div>
-                    <section class="detail-header-block">
-                        <div class="detail-identity">
-                            <div class="detail-icon-xl app-detail-icon"><i data-lucide="${resolveSafeIcon(app.icon)}" size="30"></i></div>
-                            <div class="detail-title-area">
-                                <h2>${escapeHTML(app.name || 'Aplicación')}</h2>
-                                <div class="detail-meta-inline"><span>Por <strong>${escapeHTML(app.author || 'Comunidad')}</strong></span><span>·</span><span>${escapeHTML(app.category || 'Aplicación')}</span></div>
-                                <div class="detail-badges-row">
-                                    ${app.featured ? '<span class="badge badge-featured">Destacada</span>' : ''}
-                                    ${app.isNew ? '<span class="badge badge-accent">Nuevo</span>' : ''}
-                                    <span class="badge badge-neutral">v${escapeHTML(app.version || '1.0.0')}</span>
-                                    <span class="badge badge-neutral">${escapeHTML(getApplicationStatusLabel(app))}</span>
-                                    ${app.badge ? `<span class="badge badge-neutral">${escapeHTML(app.badge)}</span>` : ''}
-                                    ${tags.map(tag => `<span class="badge badge-neutral">#${escapeHTML(tag)}</span>`).join('')}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="detail-cta-group app-detail-actions">
-                            <button class="btn-primary" id="btn-copy-app-url" ${!appUrl || statusClass === 'is-unavailable' ? 'disabled' : ''}><i data-lucide="copy" size="16"></i><span>Copiar dirección</span></button>
-                            <button class="btn-secondary" id="btn-open-app-url" ${!appUrl || statusClass === 'is-unavailable' ? 'disabled' : ''}><i data-lucide="external-link" size="16"></i><span>Abrir aplicación</span></button>
-                        </div>
-                    </section>
                     <section class="app-install-hint">
                         <div class="app-install-hint-icon"><i data-lucide="info" size="18"></i></div>
                         <div><strong>No se instala desde la tienda</strong><p>Copia la dirección y, en Homescreen, utiliza la opción <strong>App personalizada</strong> para añadirla. Se abrirá como una página independiente, no como una herramienta flotante.</p></div>
                     </section>
-                    <section class="app-detail-overview">
+                    <section class="publication-layout app-detail-overview">
                         <div class="media-showcase-box app-detail-showcase">
                             <div class="app-detail-gallery" id="app-detail-gallery">
                                 ${(() => {
@@ -1379,35 +1386,10 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                                 })()}
                             </div>
                         </div>
-                        <aside class="app-info-card">
-                            <div class="app-info-card-heading"><span class="app-info-eyebrow"><i data-lucide="info" size="13"></i> Ficha de la publicación</span><h3>${escapeHTML(app.name || 'Aplicación')}</h3></div>
-                            <p class="app-info-description">${escapeHTML(app.description || 'Sin descripción disponible.')}</p>
-                            <div class="app-info-facts">
-                                ${[
-                                    ['fingerprint','ID',app.id],
-                                    ['user-round','Autor',app.author],
-                                    ['folder','Categoría',app.category],
-                                    ['tag','Versión',app.version],
-                                    ['activity','Estado',app.status ? getApplicationStatusLabel(app) : null],
-                                    ['file-code','Archivo',app.file],
-                                    ['list-ordered','Orden',app.order],
-                                    ['calendar-plus','Creada',app.createdAt],
-                                    ['calendar-clock','Actualizada',app.updatedAt]
-                                ].filter(item => item[2] !== undefined && item[2] !== null && item[2] !== '').map(([icon,label,value]) => `
-                                    <div class="app-info-fact"><span><i data-lucide="${icon}"></i>${label}</span><strong>${escapeHTML(value)}</strong></div>
-                                `).join('')}
-                            </div>
-                            <div class="app-info-flags">
-                                ${app.featured !== undefined ? `<span class="app-info-flag ${app.featured ? 'is-on' : ''}"><i data-lucide="star"></i>${app.featured ? 'Destacada' : 'No destacada'}</span>` : ''}
-                                ${app.isNew !== undefined ? `<span class="app-info-flag ${app.isNew ? 'is-on' : ''}"><i data-lucide="sparkles"></i>${app.isNew ? 'Nueva' : 'No es nueva'}</span>` : ''}
-                                ${app.offlineReady !== undefined ? `<span class="app-info-flag ${app.offlineReady ? 'is-on' : ''}"><i data-lucide="wifi"></i>${app.offlineReady ? 'Funciona sin conexión' : 'Requiere conexión'}</span>` : ''}
-                                ${app.requiresExternalAccess !== undefined ? `<span class="app-info-flag ${!app.requiresExternalAccess ? 'is-on' : ''}"><i data-lucide="globe"></i>${app.requiresExternalAccess ? 'Necesita acceso externo' : 'Sin acceso externo'}</span>` : ''}
-                            </div>
-                            ${app.badge || app.accentColor ? `<div class="app-info-extra">${app.badge ? `<span class="app-info-badge"><i data-lucide="badge-check"></i>${escapeHTML(app.badge)}</span>` : ''}${app.accentColor && /^#[0-9a-f]{3,8}$/i.test(app.accentColor) ? `<span class="app-info-color"><i data-lucide="palette"></i><span class="app-color-swatch" style="background:${escapeHTML(app.accentColor)}"></span>${escapeHTML(app.accentColor)}</span>` : ''}</div>` : ''}
-                            ${tags.length ? `<div class="app-info-tags"><span class="app-info-section-label">Etiquetas · pulsa para explorar</span><div class="app-taxonomy-list">${tags.map(tag => `<button type="button" class="app-tag-filter" data-app-tag="${escapeHTML(tag)}">#${escapeHTML(tag)}</button>`).join('')}</div></div>` : ''}
-                            ${keywords.length ? `<div class="app-info-keywords"><span class="app-info-section-label">Palabras clave</span><div class="app-keywords">${keywords.map(word => `<span class="badge badge-neutral">${escapeHTML(word)}</span>`).join('')}</div></div>` : ''}
-                            ${(app.authorUrl || app.repoUrl) ? `<div class="app-info-links">${app.authorUrl && /^https?:\/\//i.test(app.authorUrl) ? `<a href="${escapeHTML(app.authorUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="user-round"></i> Autor</a>` : ''}${app.repoUrl && /^https?:\/\//i.test(app.repoUrl) ? `<a href="${escapeHTML(app.repoUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="github"></i> Repositorio</a>` : ''}</div>` : ''}
-                        </aside>
+                        ${renderPublicationPanel(app, `
+                            <button class="btn-primary" id="btn-open-app-url" ${!appUrl || statusClass === 'is-unavailable' ? 'disabled' : ''}><i data-lucide="external-link" size="16"></i><span>Abrir aplicación</span></button>
+                            <button class="btn-secondary" id="btn-copy-app-url" ${!appUrl || statusClass === 'is-unavailable' ? 'disabled' : ''}><i data-lucide="copy" size="16"></i><span>Copiar dirección</span></button>
+`)}
                     </section>
                     ${related.length ? `<section class="detail-section-block"><h3>Más aplicaciones</h3><div class="results-grid">${related.map(renderApplicationCard).join('')}</div></section>` : ''}
                 </div>`;
