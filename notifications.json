@@ -19,6 +19,40 @@
         "type": "internal",
         "url": "Lab/index.html"
       }
+    },
+    {
+      "id": "2026-11-lite-beta-001",
+      "type": "announcement",
+      "title": "Homescreen LITE (Beta)",
+      "message": "Prueba la nueva versión ligera de Homescreen con las características esenciales para un rendimiento ultrarrápido. Actualmente en fase beta.",
+      "date": "2026-11-26T22:15:00Z",
+      "expiresAt": null,
+      "icon": "zap",
+      "important": true,
+      "imageUrl": null,
+      "imagePosition": "top",
+      "imageAlt": "",
+      "action": {
+        "type": "internal",
+        "url": "lite.html"
+      }
+    },
+    {
+      "id": "2026-11-store-preview-001",
+      "type": "feature",
+      "title": "Tienda de Herramientas (En pruebas)",
+      "message": "Explora y descubre nuevas herramientas en nuestra tienda experimental para personalizar y mejorar tu experiencia.",
+      "date": "2026-11-26T22:15:00Z",
+      "expiresAt": null,
+      "icon": "shopping-bag",
+      "important": false,
+      "imageUrl": null,
+      "imagePosition": "top",
+      "imageAlt": "",
+      "action": {
+        "type": "external",
+        "url": "https://capybaragalaxy.github.io/homescreen-online/store"
+      }
     }
   ]
 }
