@@ -1,188 +1,23 @@
 {
   "schemaVersion": 1,
   "project": "Homescreen NEO",
-  "updatedAt": "2026-11-07T14:00:00Z",
+  "updatedAt": "2026-11-26T14:00:00Z",
   "notifications": [
     {
-      "id": "2026-11-update-007",
+      "id": "2026-11-labs-update-001",
       "type": "announcement",
-      "title": "Countdown se ha actualizado",
-      "message": "Hemos actualizado la aplicación con soporte para rachas acumulativas, colores personalizados por tarjeta, avisos de audio y mucho más.",
-      "date": "2026-11-10T14:00:00Z",
+      "title": "Nuevas aplicaciones en Homescreen Labs",
+      "message": "Hemos añadido nuevas herramientas a Homescreen Labs: pruebas de memoria (memoria visual, patrones, ritmo y tiempo), una utilidad de portapapeles (Paste) y la aplicación del tiempo (Weather).",
+      "date": "2026-11-26T14:00:00Z",
       "expiresAt": null,
-      "icon": "clock-4",
-      "important": true,
-      "imageUrl": null,
-      "imagePosition": "top",
-      "imageAlt": "",
-      "action": {
-        "type": "none"
-      }
-    },
-    {
-      "id": "2026-11-update-007",
-      "type": "update",
-      "title": "Modo Oscuro Avanzado disponible",
-      "message": "Hemos optimizado el contraste y la paleta de colores para mejorar el uso nocturno y ahorrar batería.",
-      "date": "2026-11-07T13:30:00Z",
-      "expiresAt": null,
-      "icon": "moon",
-      "important": false,
-      "imageUrl": null,
-      "imagePosition": "top",
-      "imageAlt": "",
-      "action": {
-        "type": "internal",
-        "url": "settings.html"
-      }
-    },
-        {
-      "id": "2026-11-update-006",
-      "type": "announcement",
-      "title": "Estamos probando las notificaciones en Homescreen",
-      "message": "Estamos probando este nuevo sistema de notificaciones, es posible que recibas mensajes de prueba o de información general. ¡Gracias por tu comprensión!",
-      "date": "2026-11-07T13:30:00Z",
-      "expiresAt": null,
-      "icon": "bell",
-      "important": true,
-      "imageUrl": "https://media.istockphoto.com/id/2151656410/vector/phone-notifications-icon-in-flat-style-smartphone-with-new-notice-vector-illustration-on.jpg?s=612x612&w=0&k=20&c=mre_8Bxmdfzly0QZc06NStSXyRo8VNvUMO1n35ev8Zs=",
-      "imagePosition": "top",
-      "imageAlt": "test",
-      "action": {
-        "type": "internal",
-        "url": "settings.html"
-      }
-    },
-    {
-      "id": "2026-11-feature-006",
-      "type": "feature",
-      "title": "Organización por widgets",
-      "message": "Ahora puedes anclar tus accesos rápidos y herramientas favoritas directamente en el panel principal.",
-      "date": "2026-11-07T11:00:00Z",
-      "expiresAt": null,
-      "icon": "layout-grid",
-      "important": false,
-      "imageUrl": null,
-      "imagePosition": "top",
-      "imageAlt": "",
-      "action": {
-        "type": "none"
-      }
-    },
-    {
-      "id": "2026-11-security-006",
-      "type": "warning",
-      "title": "Verificación de privacidad",
-      "message": "Revisa los permisos de las extensiones conectadas para asegurarte de que tus datos permanecen seguros.",
-      "date": "2026-11-06T16:45:00Z",
-      "expiresAt": null,
-      "icon": "shield-check",
+      "icon": "flask-conical",
       "important": true,
       "imageUrl": null,
       "imagePosition": "top",
       "imageAlt": "",
       "action": {
         "type": "internal",
-        "url": "privacy.html"
-      }
-    },
-    {
-      "id": "2026-11-performance-006",
-      "type": "announcement",
-      "title": "Mejora del rendimiento",
-      "message": "Remplazamos el motor de renderizado interno para lograr tiempos de carga un 40% más rápidos.",
-      "date": "2026-11-06T09:15:00Z",
-      "expiresAt": null,
-      "icon": "gauge",
-      "important": false,
-      "imageUrl": null,
-      "imagePosition": "top",
-      "imageAlt": "",
-      "action": {
-        "type": "none"
-      }
-    },
-    {
-      "id": "2026-11-survey-006",
-      "type": "event",
-      "title": "Queremos escuchar tu opinión",
-      "message": "Participa en nuestra encuesta de satisfacción anual y ayúdanos a definir el mapa de ruta para 2027.",
-      "date": "2026-11-05T18:00:00Z",
-      "expiresAt": "2026-11-20T23:59:59Z",
-      "icon": "message-square",
-      "important": false,
-      "imageUrl": null,
-      "imagePosition": "top",
-      "imageAlt": "",
-      "action": {
-        "type": "external",
-        "url": "https://github.com/CapybaraGalaxy/HOMESCREEN/discussions"
-      }
-    },
-    {
-      "id": "2026-11-cloud-006",
-      "type": "announcement",
-      "title": "Sincronización en la nube",
-      "message": "Guarda y restaura tu perfil y configuraciones personalizadas desde cualquier dispositivo de forma fluida.",
-      "date": "2026-11-04T14:20:00Z",
-      "expiresAt": null,
-      "icon": "cloud",
-      "important": false,
-      "imageUrl": null,
-      "imagePosition": "top",
-      "imageAlt": "",
-      "action": {
-        "type": "internal",
-        "url": "sync.html"
-      }
-    },
-    {
-      "id": "2026-11-maintenance-006",
-      "type": "maintenance",
-      "title": "Optimización del servidor",
-      "message": "Realizaremos tareas de mantenimiento en la base de datos de complementos el próximo lunes.",
-      "date": "2026-11-03T10:00:00Z",
-      "expiresAt": "2026-11-09T04:00:00Z",
-      "icon": "database",
-      "important": false,
-      "imageUrl": null,
-      "imagePosition": "top",
-      "imageAlt": "",
-      "action": {
-        "type": "none"
-      }
-    },
-    {
-      "id": "2026-11-banner-shortcuts",
-      "type": "feature",
-      "title": "Nuevos atajos gestuales",
-      "message": "Navega con mayor agilidad utilizando los nuevos gestos táctiles y combinaciones de teclado personalizadas.",
-      "date": "2026-11-02T12:00:00Z",
-      "expiresAt": null,
-      "icon": "command",
-      "important": false,
-      "imageUrl": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
-      "imagePosition": "top",
-      "imageAlt": "Persona trabajando con atajos de teclado en una laptop",
-      "action": {
-        "type": "none"
-      }
-    },
-    {
-      "id": "2026-11-community-006",
-      "type": "announcement",
-      "title": "Guía para desarrolladores",
-      "message": "Publicamos la documentación oficial de la API para quienes deseen crear sus propios módulos e integraciones.",
-      "date": "2026-11-01T15:00:00Z",
-      "expiresAt": null,
-      "icon": "code",
-      "important": false,
-      "imageUrl": null,
-      "imagePosition": "top",
-      "imageAlt": "",
-      "action": {
-        "type": "external",
-        "url": "https://github.com/CapybaraGalaxy/HOMESCREEN/wiki"
+        "url": "Lab/index.html"
       }
     }
   ]
