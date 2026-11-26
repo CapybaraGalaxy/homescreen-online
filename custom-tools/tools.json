@@ -1,7 +1,6 @@
-
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-14",
+  "updatedAt": "2026-11-26",
   "tools": [
     {
       "id": "example",
@@ -17,9 +16,25 @@
       "file": "example.html",
       "version": "1.0.0",
       "author": "Homescreen NEO",
+      "authorUrl": "https://github.com/homescreen-neo",
+      "repoUrl": "https://github.com/homescreen-neo/homescreen-neo",
       "status": "demo",
       "featured": false,
-      "order": 999
+      "order": 999,
+      "accentColor": "#64748b",
+      "previewImage": "assets/previews/example.png",
+      "badge": "Demo",
+      "isNew": false,
+      "keywords": [
+        "demo",
+        "desarrollo",
+        "ejemplo",
+        "test"
+      ],
+      "offlineReady": true,
+      "requiresExternalAccess": false,
+      "createdAt": "2026-11-01",
+      "updatedAt": "2026-11-26"
     },
     {
       "id": "ambient",
@@ -37,9 +52,28 @@
       "file": "ambient.html",
       "version": "1.0.0",
       "author": "Homescreen NEO",
+      "authorUrl": "https://github.com/homescreen-neo",
+      "repoUrl": "https://github.com/homescreen-neo/homescreen-neo",
       "status": "active",
       "featured": true,
-      "order": 999
+      "order": 999,
+      "accentColor": "#10b981",
+      "previewImage": "assets/previews/ambient.png",
+      "badge": "Popular",
+      "isNew": false,
+      "keywords": [
+        "audio",
+        "sonido",
+        "relajación",
+        "concentración",
+        "ruido blanco",
+        "lluvia",
+        "estudio"
+      ],
+      "offlineReady": true,
+      "requiresExternalAccess": false,
+      "createdAt": "2026-11-05",
+      "updatedAt": "2026-11-26"
     },
     {
       "id": "snake",
@@ -55,9 +89,25 @@
       "file": "snake.html",
       "version": "1.0.0",
       "author": "Homescreen NEO",
+      "authorUrl": "https://github.com/homescreen-neo",
+      "repoUrl": "https://github.com/homescreen-neo/homescreen-neo",
       "status": "active",
       "featured": true,
-      "order": 999
+      "order": 999,
+      "accentColor": "#eab308",
+      "previewImage": "assets/previews/snake.png",
+      "badge": "Clásico",
+      "isNew": false,
+      "keywords": [
+        "juego",
+        "snake",
+        "arcade",
+        "retro"
+      ],
+      "offlineReady": true,
+      "requiresExternalAccess": false,
+      "createdAt": "2026-11-10",
+      "updatedAt": "2026-11-26"
     },
     {
       "id": "simon",
@@ -73,9 +123,25 @@
       "file": "simon.html",
       "version": "1.0.0",
       "author": "Homescreen NEO",
+      "authorUrl": "https://github.com/homescreen-neo",
+      "repoUrl": "https://github.com/homescreen-neo/homescreen-neo",
       "status": "active",
       "featured": true,
-      "order": 999
+      "order": 999,
+      "accentColor": "#3b82f6",
+      "previewImage": "assets/previews/simon.png",
+      "badge": "Nuevo",
+      "isNew": true,
+      "keywords": [
+        "juego",
+        "simon",
+        "memoria",
+        "clásico"
+      ],
+      "offlineReady": true,
+      "requiresExternalAccess": false,
+      "createdAt": "2026-11-12",
+      "updatedAt": "2026-11-26"
     }
   ]
 }
