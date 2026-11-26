@@ -9,6 +9,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="styles.css">
+
+    <style>
+        /* Aplicaciones externas: capa visual independiente, coherente con las tarjetas existentes. */
+        .app-store-card { cursor:pointer; }
+        .app-card-cover { position:relative; overflow:hidden; }
+        .app-card-cover::after { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.16)); }
+        .app-preview-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.78; }
+        .app-card-title-row { display:flex; align-items:center; gap:9px; }
+        .app-card-title-row h3 { min-width:0; }
+        .app-status-dot { flex:0 0 7px; width:7px; height:7px; border-radius:50%; background:#34d399; box-shadow:0 0 10px currentColor; }
+        .app-status-dot.is-experimental { background:#fbbf24; }
+        .app-status-dot.is-unavailable { background:#f87171; }
+        .app-detail-icon { color:var(--app-accent); border-color:color-mix(in srgb,var(--app-accent) 35%,transparent); }
+        .app-detail-actions .btn-primary:disabled,.app-detail-actions .btn-secondary:disabled { opacity:.45; cursor:not-allowed; }
+        .app-install-hint { display:flex; align-items:flex-start; gap:13px; margin:22px 0; padding:17px 19px; border:1px solid color-mix(in srgb,var(--app-accent) 28%,var(--border-color,rgba(255,255,255,.08))); border-radius:16px; background:linear-gradient(110deg,color-mix(in srgb,var(--app-accent) 9%,rgba(255,255,255,.025)),rgba(255,255,255,.018)); }
+        .app-install-hint-icon { width:32px; height:32px; flex:0 0 32px; display:grid; place-items:center; border-radius:10px; color:var(--app-accent); background:color-mix(in srgb,var(--app-accent) 13%,transparent); }
+        .app-install-hint strong { display:block; color:var(--text-main); font-size:13px; font-weight:600; }
+        .app-install-hint p { margin:5px 0 0; color:var(--text-muted); font-size:12.5px; line-height:1.65; }
+        .app-detail-stage { min-height:260px; overflow:hidden; position:relative; display:grid; place-items:center; }
+        .app-detail-stage > img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.55; }
+        .app-detail-stage > svg { position:absolute; inset:0; width:100%; height:100%; opacity:.8; }
+        .app-detail-stage-overlay { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; padding:28px; }
+        .app-detail-stage-overlay h3 { margin:0; color:var(--text-main); font-size:22px; font-weight:600; }
+        .app-detail-stage-overlay span { color:var(--text-muted); font-size:12px; }
+        .app-keywords,.app-external-links { display:flex; flex-wrap:wrap; gap:8px; }
+        .app-external-links a { display:inline-flex; align-items:center; gap:7px; padding:9px 12px; border:1px solid var(--border-color,rgba(255,255,255,.1)); border-radius:10px; color:var(--text-muted); text-decoration:none; font-size:12px; transition:.2s ease; }
+        .app-external-links a:hover { color:var(--text-main); border-color:color-mix(in srgb,var(--app-accent) 50%,transparent); }
+        @media(max-width:640px) { .app-install-hint { padding:14px; } .app-detail-actions { width:100%; } .app-detail-actions button { flex:1; } }
+    </style>
+
 </head>
 <body>
 
@@ -85,7 +115,10 @@
 
     <script>
         const BASE_URL = 'https://raw.githubusercontent.com/CapybaraGalaxy/homescreen-online/main/custom-tools/';
+        const APPS_BASE_URL = 'https://raw.githubusercontent.com/CapybaraGalaxy/homescreen-online/main/custom-apps/';
+        const APPS_PUBLIC_URL = 'https://capybaragalaxy.github.io/homescreen-online/custom-apps/';
         const REPO_URL = 'https://github.com/CapybaraGalaxy/homescreen-online/tree/main/custom-tools';
+        const APPS_REPO_URL = 'https://github.com/CapybaraGalaxy/homescreen-online/tree/main/custom-apps';
         const STORAGE_KEY = 'neo_extensions_store_v4';
 
 const ART_PALETTES = [
@@ -135,11 +168,13 @@ const ART_PALETTES = [
 
         let appData = {
             extensions: [],
+            applications: [],
             installedIds: [],
             activeTab: 'Descubrir',
             searchQuery: '',
             currentRoute: 'catalog',
             selectedExtensionId: null,
+            selectedApplicationId: null,
             heroSlideIndex: 0,
             heroPaused: false,
             detailSlideIndex: 0,
@@ -156,6 +191,7 @@ const ART_PALETTES = [
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
                     extensionsCache: appData.extensions,
+                    applicationsCache: appData.applications,
                     installedIds: appData.installedIds
                 }));
             } catch (e) {}
@@ -186,6 +222,59 @@ const ART_PALETTES = [
             if (!iconName || typeof iconName !== 'string') return 'puzzle';
             const clean = iconName.trim().toLowerCase();
             return clean.length > 0 ? clean : 'puzzle';
+        }
+
+        function getApplicationSlug(app, idx) {
+            return String(app.id || app.file || app.name || idx)
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        function getApplicationUrl(app) {
+            if (!app?.file) return '';
+            // file procede del catálogo oficial; se codifica cada segmento sin alterar las barras.
+            const safePath = String(app.file).split('/').map(encodeURIComponent).join('/');
+            return APPS_PUBLIC_URL + safePath;
+        }
+
+        function getApplicationStatusLabel(app) {
+            const status = String(app?.status || '').toLowerCase();
+            if (['active', 'stable', 'enabled'].includes(status)) return 'Disponible';
+            if (['demo'].includes(status)) return 'Demo';
+            if (['experimental'].includes(status)) return 'Experimental';
+            if (['disabled', 'inactive', 'off', 'hidden', 'blocked', 'unavailable'].includes(status)) return 'No disponible';
+            return app?.status || 'Disponible';
+        }
+
+        function getApplicationStatusClass(app) {
+            const status = String(app?.status || '').toLowerCase();
+            if (['disabled', 'inactive', 'off', 'hidden', 'blocked', 'unavailable'].includes(status)) return 'is-unavailable';
+            if (['demo', 'experimental'].includes(status)) return 'is-experimental';
+            return 'is-active';
+        }
+
+        function copyApplicationUrl(app) {
+            const url = getApplicationUrl(app);
+            if (!url) {
+                showToast('Esta aplicación no tiene una dirección válida', 'alert-circle');
+                return;
+            }
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(url)
+                    .then(() => showToast('Dirección copiada. Añádela como App personalizada.'))
+                    .catch(() => showToast('No se pudo copiar la dirección', 'alert-circle'));
+            } else {
+                const field = document.createElement('textarea');
+                field.value = url;
+                field.style.position = 'fixed';
+                field.style.opacity = '0';
+                document.body.appendChild(field);
+                field.select();
+                const copied = document.execCommand('copy');
+                field.remove();
+                showToast(copied ? 'Dirección copiada. Añádela como App personalizada.' : 'No se pudo copiar la dirección', copied ? 'check-circle-2' : 'alert-circle');
+            }
         }
 
         function getExtensionSlug(ext, idx) {
@@ -373,9 +462,24 @@ function generateAbstractArt(seedText, variantOffset = 0) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        function navigateToApplication(slug, pushHistory = true) {
+            const app = appData.applications.find((item, idx) => getApplicationSlug(item, idx) === slug);
+            if (!app) { navigateToCatalog(false); return; }
+            appData.currentRoute = 'application';
+            appData.selectedApplicationId = slug;
+            appData.selectedExtensionId = null;
+            appData.previewFullscreen = false;
+            appData.previewHtml = '';
+            appData.previewLoading = false;
+            if (pushHistory) window.history.pushState({ route: 'application', slug }, '', '#app/' + encodeURIComponent(slug));
+            renderApp();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function navigateToCatalog(pushHistory = true) {
             appData.currentRoute = 'catalog';
             appData.selectedExtensionId = null;
+            appData.selectedApplicationId = null;
             appData.previewFullscreen = false;
             appData.previewHtml = '';
             appData.previewLoading = false;
@@ -393,17 +497,29 @@ function generateAbstractArt(seedText, variantOffset = 0) {
 
         function syncRouteFromHash() {
             const hash = window.location.hash || '';
+            if (hash.startsWith('#app/')) {
+                const slug = decodeURIComponent(hash.slice('#app/'.length));
+                const exists = appData.applications.some((item, idx) => getApplicationSlug(item, idx) === slug);
+                if (exists) {
+                    appData.currentRoute = 'application';
+                    appData.selectedApplicationId = slug;
+                    appData.selectedExtensionId = null;
+                    return;
+                }
+            }
             if (hash.startsWith('#extension/')) {
                 const slug = decodeURIComponent(hash.slice('#extension/'.length));
                 const exists = appData.extensions.some((item, idx) => getExtensionSlug(item, idx) === slug);
                 if (exists) {
                     appData.currentRoute = 'detail';
                     appData.selectedExtensionId = slug;
+                    appData.selectedApplicationId = null;
                     return;
                 }
             }
             appData.currentRoute = 'catalog';
             appData.selectedExtensionId = null;
+            appData.selectedApplicationId = null;
         }
 
         function loadInteractivePreview(ext, forceReload = false) {
@@ -579,7 +695,7 @@ function generateAbstractArt(seedText, variantOffset = 0) {
 
             const tabsEl = document.getElementById('nav-tabs');
             const categories = [...new Set(appData.extensions.map(e => e.category).filter(Boolean))];
-            const tabs = ['Descubrir', 'Todas', ...categories];
+            const tabs = ['Descubrir', 'Todas', 'Aplicaciones', ...categories];
 
             if (!tabs.includes(appData.activeTab)) {
                 appData.activeTab = 'Descubrir';
@@ -635,6 +751,56 @@ function generateAbstractArt(seedText, variantOffset = 0) {
             `;
         }
 
+        function renderApplicationCard(app) {
+            const idx = appData.applications.indexOf(app);
+            const slug = getApplicationSlug(app, idx);
+            const art = generateAbstractArt(app.id || app.name, idx + 7);
+            const statusClass = getApplicationStatusClass(app);
+            const tags = Array.isArray(app.tags) ? app.tags : [];
+            const badge = app.badge || (app.isNew ? 'Nuevo' : (app.featured ? 'Destacada' : getApplicationStatusLabel(app)));
+            const accent = /^#[0-9a-f]{3,8}$/i.test(app.accentColor || '') ? app.accentColor : '#8b8bff';
+            const preview = app.previewImage ? APPS_PUBLIC_URL + String(app.previewImage).split('/').map(encodeURIComponent).join('/') : '';
+            return `
+                <article class="ext-card app-store-card" data-app-slug="${escapeHTML(slug)}">
+                    <div class="card-cover app-card-cover" style="background:${art.background};--app-accent:${escapeHTML(accent)}">
+                        ${preview ? `<img class="app-preview-image" src="${escapeHTML(preview)}" alt="" loading="lazy" onerror="this.remove()">` : art.svg}
+                        <div class="card-floating-icon"><i data-lucide="${resolveSafeIcon(app.icon)}" size="21"></i></div>
+                        <div class="card-badges-top">
+                            ${app.featured ? '<span class="badge badge-featured"><i data-lucide="sparkles" size="11"></i> Destacada</span>' : ''}
+                            ${app.isNew ? '<span class="badge badge-accent">Nuevo</span>' : ''}
+                            <span class="badge badge-version">${escapeHTML(app.version || '1.0.0')}</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="app-card-title-row">
+                                <h3>${escapeHTML(app.name || 'Aplicación')}</h3>
+                                <span class="app-status-dot ${statusClass}" title="${escapeHTML(getApplicationStatusLabel(app))}"></span>
+                            </div>
+                            <p>${escapeHTML(app.description || 'Experiencia independiente para Homescreen NEO.')}</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="badge badge-neutral">${escapeHTML(tags[0] ? '#' + tags[0] : (app.category || 'Aplicación'))}</span>
+                            <span class="card-cta"><span>Detalles</span><i data-lucide="chevron-right" size="14"></i></span>
+                        </div>
+                    </div>
+                </article>`;
+        }
+
+        function renderApplicationsSection(apps, title = 'Aplicaciones independientes', subtitle = 'Páginas web para añadir manualmente a Homescreen') {
+            if (!apps.length) return '';
+            return `
+                <section class="shelf-section app-store-section">
+                    <div class="shelf-header">
+                        <div class="shelf-title-group">
+                            <h2 class="shelf-title">${escapeHTML(title)}</h2>
+                            <span class="shelf-subtitle">${escapeHTML(subtitle)}</span>
+                        </div>
+                    </div>
+                    <div class="results-grid">${apps.map(renderApplicationCard).join('')}</div>
+                </section>`;
+        }
+
         function updateCarouselControlsVisibility() {
             document.querySelectorAll('.carousel-track').forEach(track => {
                 const controls = document.querySelector(`[data-controls-for="${track.id}"]`);
@@ -654,17 +820,15 @@ function generateAbstractArt(seedText, variantOffset = 0) {
 
             if (query) {
                 const filtered = appData.extensions.filter(ext => {
-                    const haystack = [
-                        ext.name,
-                        ext.description,
-                        ext.author,
-                        ext.category,
-                        ...(ext.tags || [])
-                    ].join(' ').toLowerCase();
+                    const haystack = [ext.name, ext.description, ext.author, ext.category, ...(ext.tags || []), ...(ext.keywords || [])].join(' ').toLowerCase();
+                    return haystack.includes(query);
+                });
+                const filteredApps = appData.applications.filter(app => {
+                    const haystack = [app.name, app.description, app.author, app.category, ...(app.tags || []), ...(app.keywords || [])].join(' ').toLowerCase();
                     return haystack.includes(query);
                 });
 
-                if (filtered.length === 0) {
+                if (filtered.length === 0 && filteredApps.length === 0) {
                     container.innerHTML = `
                         <div class="view-section">
                             <div class="empty-state">
@@ -683,15 +847,20 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                             <div class="shelf-header">
                                 <div class="shelf-title-group">
                                     <h2 class="shelf-title">Resultados de búsqueda</h2>
-                                    <span class="shelf-subtitle">${filtered.length} ${filtered.length === 1 ? 'coincidencia' : 'coincidencias'}</span>
+                                    <span class="shelf-subtitle">${filtered.length + filteredApps.length} ${(filtered.length + filteredApps.length) === 1 ? 'coincidencia' : 'coincidencias'}</span>
                                 </div>
                             </div>
-                            <div class="results-grid">
-                                ${filtered.map(ext => renderStandardCard(ext)).join('')}
-                            </div>
+                            ${filtered.length ? `<div class="results-grid">${filtered.map(ext => renderStandardCard(ext)).join('')}</div>` : ''}
+                            ${renderApplicationsSection(filteredApps, 'Aplicaciones', 'Resultados de aplicaciones independientes')}
                         </section>
                     </div>
                 `;
+                return;
+            }
+
+            if (appData.activeTab === 'Aplicaciones') {
+                const apps = appData.applications.slice().sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                container.innerHTML = `<div class="view-section">${renderApplicationsSection(apps, 'Aplicaciones', 'Experiencias web independientes · Añádelas como App personalizada')}</div>`;
                 return;
             }
 
@@ -822,6 +991,7 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                 });
             }
 
+            html += renderApplicationsSection(appData.applications.filter(app => app.featured).length ? appData.applications.filter(app => app.featured).slice().sort((a, b) => (a.order ?? 999) - (b.order ?? 999)) : appData.applications.slice().sort((a, b) => (a.order ?? 999) - (b.order ?? 999)), 'Aplicaciones independientes', 'Experiencias web que puedes añadir manualmente a Homescreen');
             html += `</div>`;
             container.innerHTML = html;
             requestAnimationFrame(updateCarouselControlsVisibility);
@@ -1080,10 +1250,89 @@ function generateAbstractArt(seedText, variantOffset = 0) {
             }
         }
 
+        function renderApplicationDetailPage(container) {
+            const app = appData.applications.find((item, idx) => getApplicationSlug(item, idx) === appData.selectedApplicationId);
+            if (!app) {
+                container.innerHTML = `<div class="view-section"><div class="empty-state"><i data-lucide="alert-circle" size="30"></i><h3>Aplicación no encontrada</h3><p>El enlace solicitado no corresponde a ninguna aplicación disponible.</p><button class="btn-secondary" id="btn-back-home">Volver al catálogo</button></div></div>`;
+                return;
+            }
+            const accent = /^#[0-9a-f]{3,8}$/i.test(app.accentColor || '') ? app.accentColor : '#8b8bff';
+            const appUrl = getApplicationUrl(app);
+            const tags = Array.isArray(app.tags) ? app.tags : [];
+            const keywords = Array.isArray(app.keywords) ? app.keywords : [];
+            const related = appData.applications.filter(item => item.id !== app.id).slice(0, 4);
+            const previewUrl = app.previewImage ? APPS_PUBLIC_URL + String(app.previewImage).split('/').map(encodeURIComponent).join('/') : '';
+            const statusClass = getApplicationStatusClass(app);
+            container.innerHTML = `
+                <div class="view-section detail-page app-detail-page" style="--app-accent:${escapeHTML(accent)}">
+                    <div class="detail-topbar">
+                        <div class="detail-breadcrumb"><button id="btn-back-home"><i data-lucide="arrow-left" size="15"></i><span>Volver</span></button><span>/</span><span>Aplicaciones</span></div>
+                        <button class="btn-secondary" id="btn-share-app" style="padding:7px 14px;font-size:12.5px"><i data-lucide="share-2" size="14"></i><span>Compartir ficha</span></button>
+                    </div>
+                    <section class="detail-header-block">
+                        <div class="detail-identity">
+                            <div class="detail-icon-xl app-detail-icon"><i data-lucide="${resolveSafeIcon(app.icon)}" size="30"></i></div>
+                            <div class="detail-title-area">
+                                <h2>${escapeHTML(app.name || 'Aplicación')}</h2>
+                                <div class="detail-meta-inline"><span>Por <strong>${escapeHTML(app.author || 'Comunidad')}</strong></span><span>·</span><span>${escapeHTML(app.category || 'Aplicación')}</span></div>
+                                <div class="detail-badges-row">
+                                    ${app.featured ? '<span class="badge badge-featured">Destacada</span>' : ''}
+                                    ${app.isNew ? '<span class="badge badge-accent">Nuevo</span>' : ''}
+                                    <span class="badge badge-neutral">v${escapeHTML(app.version || '1.0.0')}</span>
+                                    <span class="badge badge-neutral">${escapeHTML(getApplicationStatusLabel(app))}</span>
+                                    ${app.badge ? `<span class="badge badge-neutral">${escapeHTML(app.badge)}</span>` : ''}
+                                    ${tags.map(tag => `<span class="badge badge-neutral">#${escapeHTML(tag)}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="detail-cta-group app-detail-actions">
+                            <button class="btn-primary" id="btn-copy-app-url" ${!appUrl || statusClass === 'is-unavailable' ? 'disabled' : ''}><i data-lucide="copy" size="16"></i><span>Copiar dirección</span></button>
+                            <button class="btn-secondary" id="btn-open-app-url" ${!appUrl || statusClass === 'is-unavailable' ? 'disabled' : ''}><i data-lucide="external-link" size="16"></i><span>Abrir aplicación</span></button>
+                        </div>
+                    </section>
+                    <section class="app-install-hint">
+                        <div class="app-install-hint-icon"><i data-lucide="info" size="18"></i></div>
+                        <div><strong>No se instala desde la tienda</strong><p>Copia la dirección y, en Homescreen, utiliza la opción <strong>App personalizada</strong> para añadirla. Se abrirá como una página independiente, no como una herramienta flotante.</p></div>
+                    </section>
+                    <section class="media-showcase-box app-detail-showcase">
+                        <div class="media-stage app-detail-stage" style="background:linear-gradient(135deg,${escapeHTML(accent)}22,#111116 72%)">
+                            ${previewUrl ? `<img src="${escapeHTML(previewUrl)}" alt="Vista previa de ${escapeHTML(app.name)}" onerror="this.style.display='none'">` : generateAbstractArt(app.id || app.name, 8).svg}
+                            <div class="app-detail-stage-overlay"><div class="detail-icon-xl"><i data-lucide="${resolveSafeIcon(app.icon)}" size="27"></i></div><h3>${escapeHTML(app.name || 'Aplicación')}</h3><span>${escapeHTML(app.category || 'Aplicación web')}</span></div>
+                        </div>
+                    </section>
+                    <section class="detail-section-block"><h3>Descripción</h3><p class="detail-desc-text">${escapeHTML(app.description || 'Esta aplicación no incluye una descripción detallada.')}</p></section>
+                    <section class="detail-section-block">
+                        <h3>Detalles</h3>
+                        <div class="details-specs-grid">
+                            <div class="spec-item"><span>Versión</span><strong>${escapeHTML(app.version || '1.0.0')}</strong></div>
+                            <div class="spec-item"><span>Desarrollador</span><strong>${escapeHTML(app.author || 'Comunidad')}</strong></div>
+                            <div class="spec-item"><span>Estado</span><strong>${escapeHTML(getApplicationStatusLabel(app))}</strong></div>
+                            <div class="spec-item"><span>Archivo</span><strong>${escapeHTML(app.file || 'N/A')}</strong></div>
+                            <div class="spec-item"><span>Uso sin conexión</span><strong>${app.offlineReady === true ? 'Preparada' : app.offlineReady === false ? 'Requiere conexión' : 'No especificado'}</strong></div>
+                            <div class="spec-item"><span>Acceso externo</span><strong>${app.requiresExternalAccess === true ? 'Necesario' : app.requiresExternalAccess === false ? 'No necesario' : 'No especificado'}</strong></div>
+                            <div class="spec-item"><span>Creada</span><strong>${escapeHTML(app.createdAt || '—')}</strong></div>
+                            <div class="spec-item"><span>Actualizada</span><strong>${escapeHTML(app.updatedAt || '—')}</strong></div>
+                        </div>
+                    </section>
+                    ${keywords.length ? `<section class="detail-section-block"><h3>Palabras clave</h3><div class="app-keywords">${keywords.map(word => `<span class="badge badge-neutral">${escapeHTML(word)}</span>`).join('')}</div></section>` : ''}
+                    <section class="detail-section-block app-links-row">
+                        <h3>Enlaces</h3><div class="app-external-links">
+                            ${app.authorUrl ? `<a href="${escapeHTML(app.authorUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="user-round" size="14"></i> Desarrollador</a>` : ''}
+                            ${app.repoUrl ? `<a href="${escapeHTML(app.repoUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="github" size="14"></i> Repositorio</a>` : ''}
+                            <a href="${escapeHTML(appUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="external-link" size="14"></i> Dirección pública</a>
+                        </div>
+                    </section>
+                    ${related.length ? `<section class="detail-section-block"><h3>Más aplicaciones</h3><div class="results-grid">${related.map(renderApplicationCard).join('')}</div></section>` : ''}
+                </div>`;
+        }
+
         function renderApp() {
             renderTopNavigation();
             const mainContent = document.getElementById('main-content');
-            if (appData.currentRoute === 'detail') {
+            if (appData.currentRoute === 'application') {
+                stopHeroTimer();
+                renderApplicationDetailPage(mainContent);
+            } else if (appData.currentRoute === 'detail') {
                 stopHeroTimer();
                 renderDetailPage(mainContent);
             } else {
@@ -1118,6 +1367,24 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                 appData.isLoading = false;
                 saveData();
                 syncRouteFromHash();
+                renderApp();
+            }
+        }
+
+        async function fetchApplications(manualSync = false) {
+            try {
+                const response = await fetch(APPS_BASE_URL + 'apps.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const payload = await response.json();
+                appData.applications = (Array.isArray(payload.apps) ? payload.apps : [])
+                    .filter(app => app && app.id && app.file)
+                    .slice()
+                    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+                try { localStorage.setItem(STORAGE_KEY + '_apps', JSON.stringify(appData.applications)); } catch (e) {}
+                if (manualSync) showToast('Catálogo de aplicaciones actualizado');
+            } catch (error) {
+                if (manualSync) showToast('No se pudo actualizar el catálogo de aplicaciones', 'wifi-off');
+            } finally {
                 renderApp();
             }
         }
@@ -1227,7 +1494,7 @@ function generateAbstractArt(seedText, variantOffset = 0) {
 
             // Botón sincronizar catálogo
             document.getElementById('btn-sync-catalog').addEventListener('click', () => {
-                fetchCatalog(true);
+                Promise.allSettled([fetchCatalog(true), fetchApplications(true)]);
             });
 
             // Logo superior -> volver a Descubrir
@@ -1312,6 +1579,27 @@ function generateAbstractArt(seedText, variantOffset = 0) {
 
             // Delegación global en contenido principal
             document.getElementById('main-content').addEventListener('click', e => {
+                const appCard = e.target.closest('[data-app-slug]');
+                if (appCard?.dataset.appSlug) {
+                    navigateToApplication(appCard.dataset.appSlug, true);
+                    return;
+                }
+                if (e.target.closest('#btn-copy-app-url')) {
+                    const app = appData.applications.find((item, idx) => getApplicationSlug(item, idx) === appData.selectedApplicationId);
+                    if (app) copyApplicationUrl(app);
+                    return;
+                }
+                if (e.target.closest('#btn-open-app-url')) {
+                    const app = appData.applications.find((item, idx) => getApplicationSlug(item, idx) === appData.selectedApplicationId);
+                    const url = app && getApplicationUrl(app);
+                    if (url) window.open(url, '_blank', 'noopener,noreferrer');
+                    return;
+                }
+                if (e.target.closest('#btn-share-app')) {
+                    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(window.location.href).then(() => showToast('Enlace de la ficha copiado')).catch(() => showToast('No se pudo copiar el enlace', 'alert-circle'));
+                    return;
+                }
+
                 // Controles del Hero Banner
                 if (e.target.closest('#hero-prev')) {
                     const len = getHeroSlides().length;
@@ -1458,6 +1746,7 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                     if (Array.isArray(parsed.installedIds)) {
                         appData.installedIds = parsed.installedIds;
                     }
+                    if (Array.isArray(parsed.applicationsCache)) appData.applications = parsed.applicationsCache;
                 } else {
                     appData.extensions = FALLBACK_EXTENSIONS;
                 }
@@ -1465,10 +1754,15 @@ function generateAbstractArt(seedText, variantOffset = 0) {
                 appData.extensions = FALLBACK_EXTENSIONS;
             }
 
+            try {
+                const cachedApps = JSON.parse(localStorage.getItem(STORAGE_KEY + '_apps') || '[]');
+                if (Array.isArray(cachedApps)) appData.applications = cachedApps;
+            } catch (e) {}
             syncRouteFromHash();
             setupEventListeners();
             renderApp();
             fetchCatalog();
+            fetchApplications();
         };
     </script>
 </body>
